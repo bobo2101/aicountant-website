@@ -166,6 +166,10 @@ const translations = {
         'form.message': '留言',
         'form.submit': '提交咨询',
         'footer.rights': '版权所有',
+        
+        // Resources
+        'resources.title': 'Resources & Insights',
+        'resources.subtitle': 'Expert guides and answers for Hong Kong businesses',
         'notification.success': '感谢您的咨询！我们将在24小时内与您联系。',
         'notification.error': '请填写姓名和邮箱！',
         'notification.emailError': '请输入有效的邮箱地址！'
@@ -334,6 +338,10 @@ const translations = {
         'form.message': 'Message',
         'form.submit': 'Submit Inquiry',
         'footer.rights': 'All rights reserved',
+        
+        // Resources
+        'resources.title': 'Resources & Insights',
+        'resources.subtitle': 'Expert guides and answers for Hong Kong businesses',
         'notification.success': 'Thank you for your inquiry! We will contact you within 24 hours.',
         'notification.error': 'Please fill in name and email!',
         'notification.emailError': 'Please enter a valid email address!'
@@ -502,6 +510,10 @@ const translations = {
         'form.message': '留言',
         'form.submit': '提交諮詢',
         'footer.rights': '版權所有',
+        
+        // Resources
+        'resources.title': 'Resources & Insights',
+        'resources.subtitle': 'Expert guides and answers for Hong Kong businesses',
         'notification.success': '感謝您的諮詢！我們將在24小時內與您聯繫。',
         'notification.error': '請填寫姓名和郵箱！',
         'notification.emailError': '請輸入有效的郵箱地址！'
@@ -673,6 +685,31 @@ const statsSection = document.querySelector('.about-stats');
 if (statsSection) {
     statsObserver.observe(statsSection);
 }
+
+// ==================== 
+// FAQ 交互功能
+// ==================== 
+document.addEventListener('DOMContentLoaded', () => {
+    const faqItems = document.querySelectorAll('.faq-item');
+    
+    faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        
+        question.addEventListener('click', () => {
+            const isActive = item.classList.contains('active');
+            
+            // 關閉所有其他項目
+            faqItems.forEach(faq => {
+                faq.classList.remove('active');
+            });
+            
+            // 切換當前項目
+            if (!isActive) {
+                item.classList.add('active');
+            }
+        });
+    });
+});
 
 // ==================== 
 // 联系表单提交
