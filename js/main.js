@@ -7,8 +7,9 @@ const translations = {
         'nav.home': '首页',
         'nav.about': '关于我们',
         'nav.services': '服务',
-        'nav.resources': 'Resources',
+        'nav.resources': '資源中心',
         'nav.contact': '联系我们',
+        'nav.portal': '客戶登入',
         'hero.title': '智能会计，轻松管理',
         'hero.subtitle': 'AIcountant 结合人工智能与专业会计服务，为您的企业提供高效、准确的财务解决方案',
         'hero.cta': '查看服务',
@@ -168,8 +169,8 @@ const translations = {
         'footer.rights': '版权所有',
         
         // Resources
-        'resources.title': 'Resources & Insights',
-        'resources.subtitle': 'Expert guides and answers for Hong Kong businesses',
+        'resources.title': '資源中心',
+        'resources.subtitle': '專業指南與常見問題，助力香港企業',
         
         // Resources Page (Chinese)
         'resources.hero.title': '資源中心',
@@ -229,6 +230,7 @@ const translations = {
         'nav.services': 'Services',
         'nav.resources': 'Resources',
         'nav.contact': 'Contact',
+        'nav.portal': 'Client Login',
         'hero.title': 'Smart Accounting, Easy Management',
         'hero.subtitle': 'AIcountant combines artificial intelligence with professional accounting services to provide efficient and accurate financial solutions for your business',
         'hero.cta': 'View Services',
@@ -447,8 +449,9 @@ const translations = {
         'nav.home': '首頁',
         'nav.about': '關於我們',
         'nav.services': '服務',
-        'nav.resources': 'Resources',
+        'nav.resources': '資源中心',
         'nav.contact': '聯繫我們',
+        'nav.portal': '客戶登入',
         'hero.title': '智能會計，輕鬆管理',
         'hero.subtitle': 'AIcountant 結合人工智能與專業會計服務，為您的企業提供高效、準確的財務解決方案',
         'hero.cta': '查看服務',
@@ -608,8 +611,8 @@ const translations = {
         'footer.rights': '版權所有',
         
         // Resources
-        'resources.title': 'Resources & Insights',
-        'resources.subtitle': 'Expert guides and answers for Hong Kong businesses',
+        'resources.title': '資源中心',
+        'resources.subtitle': '專業指南與常見問題，助力香港企業',
         
         // Resources Page (Traditional Chinese)
         'resources.hero.title': '資源中心',

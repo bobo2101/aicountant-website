@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>儀表板 - AIcountant Portal</title>
+    <meta name="description" content="AIcountant 客戶儀表板，管理您的財務數據和會計記錄。">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="portal.css">
+</head>
+<body class="portal-body">
+    <div class="portal-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">AIcountant</div>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="dashboard.html" class="active"><span class="icon">📊</span> 儀表板</a></li>
+                    <li><a href="transactions.html"><span class="icon">💰</span> 交易記錄</a></li>
+                    <li><a href="documents.html"><span class="icon">📄</span> 文件管理</a></li>
+                    <li><a href="reports.html"><span class="icon">📈</span> 財務報告</a></li>
+                    <li><a href="invoices.html"><span class="icon">🧾</span> 發票管理</a></li>
+                    <li><a href="settings.html"><span class="icon">⚙️</span> 設置</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-details">
+                        <span class="user-name" id="userName">客戶名稱</span>
+                        <span class="user-role">企業帳戶</span>
+                    </div>
+                    <button class="logout-btn" onclick="logout()" title="登出">🚪</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <h1>儀表板</h1>
+                <p>歡迎回來，這是您的財務概覽</p>
+            </header>
+
+            <!-- Stats Grid -->
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-card-title">本月收入</span>
+                        <div class="stat-card-icon">💰</div>
+                    </div>
+                    <div class="stat-card-value">HK$ 128,500</div>
+                    <div class="stat-card-change">+12.5% 較上月</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-card-title">本月支出</span>
+                        <div class="stat-card-icon">💸</div>
+                    </div>
+                    <div class="stat-card-value">HK$ 45,200</div>
+                    <div class="stat-card-change negative">+5.3% 較上月</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-card-title">淨利潤</span>
+                        <div class="stat-card-icon">📈</div>
+                    </div>
+                    <div class="stat-card-value">HK$ 83,300</div>
+                    <div class="stat-card-change">+18.2% 較上月</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-card-title">待處理發票</span>
+                        <div class="stat-card-icon">🧾</div>
+                    </div>
+                    <div class="stat-card-value">8</div>
+                    <div class="stat-card-change">總額 HK$ 24,000</div>
+                </div>
+            </div>
+
+            <!-- Content Grid -->
+            <div class="content-grid">
+                <!-- Recent Transactions -->
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3>最近交易</h3>
+                        <a href="transactions.html" class="btn btn-secondary" style="padding: 8px 16px; font-size: 13px;">查看全部</a>
+                    </div>
+                    <div class="card-body">
+                        <table class="transaction-table">
+                            <thead>
+                                <tr>
+                                    <th>日期</th>
+                                    <th>描述</th>
+                                    <th>類別</th>
+                                    <th>金額</th>
+                                    <th>狀態</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2024-03-10</td>
+                                    <td>客戶付款 - ABC公司</td>
+                                    <td>收入</td>
+                                    <td>+HK$ 15,000</td>
+                                    <td><span class="status-badge status-completed">已完成</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2024-03-09</td>
+                                    <td>辦公室租金</td>
+                                    <td>支出</td>
+                                    <td>-HK$ 8,500</td>
+                                    <td><span class="status-badge status-completed">已完成</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2024-03-08</td>
+                                    <td>軟件訂閱 - QuickBooks</td>
+                                    <td>支出</td>
+                                    <td>-HK$ 450</td>
+                                    <td><span class="status-badge status-completed">已完成</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2024-03-07</td>
+                                    <td>客戶付款 - XYZ有限公司</td>
+                                    <td>收入</td>
+                                    <td>+HK$ 28,000</td>
+                                    <td><span class="status-badge status-pending">待入帳</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2024-03-06</td>
+                                    <td>員工薪資</td>
+                                    <td>支出</td>
+                                    <td>-HK$ 35,000</td>
+                                    <td><span class="status-badge status-processing">處理中</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3>快速操作</h3>
+                    </div>
+                    <div class="card-body">
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <a href="documents.html" class="btn btn-secondary" style="text-align: center;">
+                                📄 上傳新文件
+                            </a>
+                            <a href="invoices.html" class="btn btn-secondary" style="text-align: center;">
+                                🧾 創建發票
+                            </a>
+                            <a href="reports.html" class="btn btn-secondary" style="text-align: center;">
+                                📊 生成報告
+                            </a>
+                            <a href="#" class="btn btn-secondary" style="text-align: center;" onclick="alert('聯繫會計師功能即將推出')">
+                                💬 聯繫會計師
+                            </a>
+                        </div>
+                        
+                        <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #f0f0f0;">
+                            <h4 style="font-size: 14px; color: #666; margin-bottom: 12px;">本日待辦</h4>
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
+                                    <input type="checkbox" style="width: 16px; height: 16px;">
+                                    <span>審核3份新發票</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
+                                    <input type="checkbox" style="width: 16px; height: 16px;">
+                                    <span>確認銀行對帳單</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
+                                    <input type="checkbox" style="width: 16px; height: 16px;">
+                                    <span>上傳收據文件</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Check if user is logged in
+        if (!localStorage.getItem('aicountant-portal-logged-in')) {
+            window.location.href = 'login.html';
+        }
+
+        // Display user name
+        const userEmail = localStorage.getItem('aicountant-portal-user');
+        if (userEmail) {
+            document.getElementById('userName').textContent = userEmail.split('@')[0];
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('aicountant-portal-logged-in');
+            localStorage.removeItem('aicountant-portal-user');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

@@ -39,23 +39,26 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1a1a1a;
     color: white;
+    border: 2px solid #1a1a1a;
 }
 
 .btn-primary:hover {
+    background: transparent;
+    color: #1a1a1a;
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .btn-secondary {
-    background: white;
-    color: #667eea;
-    border: 2px solid #667eea;
+    background: transparent;
+    color: #1a1a1a;
+    border: 2px solid #1a1a1a;
 }
 
 .btn-secondary:hover {
-    background: #667eea;
+    background: #1a1a1a;
     color: white;
     transform: translateY(-2px);
 }
@@ -83,10 +86,8 @@ body {
 .logo {
     font-size: 24px;
     font-weight: bold;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #1a1a1a;
+    letter-spacing: -0.5px;
 }
 
 .nav-links {
@@ -103,7 +104,8 @@ body {
 }
 
 .nav-links a:hover {
-    color: #667eea;
+    color: #1a1a1a;
+    opacity: 0.7;
 }
 
 /* ==================== 
@@ -130,8 +132,8 @@ body {
 }
 
 .lang-current:hover {
-    border-color: #667eea;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+    border-color: #1a1a1a;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .lang-flag {
@@ -191,7 +193,7 @@ body {
 }
 
 .lang-option.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1a1a1a;
     color: white;
 }
 
@@ -216,12 +218,13 @@ body {
 ==================== */
 .hero {
     min-height: 90vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #ffffff;
     display: flex;
     align-items: center;
     text-align: center;
-    color: white;
+    color: #1a1a1a;
     padding-top: 70px;
+    border-bottom: 1px solid #f0f0f0;
 }
 
 .hero h1 {
@@ -301,7 +304,7 @@ body {
     position: absolute;
     top: -15px;
     left: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1a1a1a;
     color: white;
     width: 40px;
     height: 40px;
@@ -332,9 +335,10 @@ body {
 
 .step-arrow {
     font-size: 32px;
-    color: #667eea;
+    color: #1a1a1a;
     align-self: center;
     font-weight: bold;
+    opacity: 0.5;
 }
 
 /* ==================== 
@@ -388,7 +392,8 @@ body {
     font-size: 64px;
     width: 100px;
     height: 100px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
     border-radius: 20px;
     display: flex;
     align-items: center;
@@ -429,8 +434,8 @@ body {
 
 .pricing-card.featured {
     background: white;
-    border-color: #667eea;
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.15);
+    border-color: #1a1a1a;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
 .pricing-badge {
@@ -438,7 +443,7 @@ body {
     top: -12px;
     left: 50%;
     transform: translateX(-50%);
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1a1a1a;
     color: white;
     padding: 6px 20px;
     border-radius: 20px;
@@ -466,7 +471,7 @@ body {
 
 .price .currency {
     font-size: 24px;
-    color: #667eea;
+    color: #1a1a1a;
     font-weight: 600;
 }
 
@@ -510,7 +515,7 @@ body {
 .btn-pricing {
     width: 100%;
     text-align: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1a1a1a;
     color: white;
     padding: 14px;
     border-radius: 10px;
@@ -518,11 +523,14 @@ body {
     display: block;
     font-weight: 600;
     transition: all 0.3s ease;
+    border: 2px solid #1a1a1a;
 }
 
 .btn-pricing:hover {
+    background: transparent;
+    color: #1a1a1a;
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 /* ==================== 
@@ -543,7 +551,8 @@ body {
 .about-text h3 {
     font-size: 24px;
     margin-bottom: 15px;
-    color: #667eea;
+    color: #1a1a1a;
+    font-weight: 600;
 }
 
 .about-text p {
@@ -570,10 +579,7 @@ body {
     display: block;
     font-size: 36px;
     font-weight: bold;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #1a1a1a;
     margin-bottom: 5px;
 }
 
@@ -632,7 +638,8 @@ body {
 .author-avatar {
     width: 50px;
     height: 50px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #f0f0f0;
+    border: 2px solid #e0e0e0;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -727,7 +734,7 @@ body {
 .form-group textarea:focus,
 .form-group select:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #1a1a1a;
 }
 
 .form-group select {
@@ -749,13 +756,14 @@ body {
 ==================== */
 .resources-hero {
     min-height: 50vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #ffffff;
     display: flex;
     align-items: center;
     text-align: center;
-    color: white;
+    color: #1a1a1a;
     padding-top: 70px;
     padding-bottom: 60px;
+    border-bottom: 1px solid #f0f0f0;
 }
 
 .resources-hero h1 {
@@ -801,8 +809,8 @@ body {
 
 .resources-nav-list a:hover,
 .resources-nav-list a.active {
-    color: #667eea;
-    border-bottom-color: #667eea;
+    color: #1a1a1a;
+    border-bottom-color: #1a1a1a;
 }
 
 /* Resources Section (on index page) */
@@ -897,9 +905,10 @@ body {
 
 .faq-toggle {
     font-size: 24px;
-    color: #667eea;
+    color: #1a1a1a;
     transition: transform 0.3s;
     font-weight: 300;
+    opacity: 0.6;
 }
 
 .faq-item.active .faq-toggle {
@@ -951,7 +960,8 @@ body {
 .guide-icon {
     width: 50px;
     height: 50px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -1004,7 +1014,8 @@ body {
 
 .blog-image {
     height: 160px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #f8f9fa;
+    border-bottom: 1px solid #e0e0e0;
     display: flex;
     align-items: center;
     justify-content: center;
