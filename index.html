@@ -15,13 +15,30 @@
                 <li><a href="#home" data-i18n="nav.home">首页</a></li>
                 <li><a href="#about" data-i18n="nav.about">关于我们</a></li>
                 <li><a href="#services" data-i18n="nav.services">服务</a></li>
+                <li><a href="resources.html" data-i18n="nav.resources">Resources</a></li>
                 <li><a href="#contact" data-i18n="nav.contact">联系我们</a></li>
             </ul>
-            <!-- 语言切换器 -->
-            <div class="language-switcher">
-                <button class="lang-btn active" data-lang="zh">简</button>
-                <button class="lang-btn" data-lang="en">EN</button>
-                <button class="lang-btn" data-lang="zh-TW">繁</button>
+            <!-- 语言切换器 - 下拉式 -->
+            <div class="language-dropdown">
+                <button class="lang-current" id="langCurrent">
+                    <span class="lang-flag">🇺🇸</span>
+                    <span class="lang-name">English</span>
+                    <span class="lang-arrow">▼</span>
+                </button>
+                <div class="lang-options" id="langOptions">
+                    <button class="lang-option" data-lang="en">
+                        <span class="lang-flag">🇺🇸</span>
+                        <span class="lang-name">English</span>
+                    </button>
+                    <button class="lang-option" data-lang="zh">
+                        <span class="lang-flag">🇨🇳</span>
+                        <span class="lang-name">简体中文</span>
+                    </button>
+                    <button class="lang-option" data-lang="zh-TW">
+                        <span class="lang-flag">🇭🇰</span>
+                        <span class="lang-name">繁體中文</span>
+                    </button>
+                </div>
             </div>
             <div class="hamburger">
                 <span></span>

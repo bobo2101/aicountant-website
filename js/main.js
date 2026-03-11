@@ -7,6 +7,7 @@ const translations = {
         'nav.home': '首页',
         'nav.about': '关于我们',
         'nav.services': '服务',
+        'nav.resources': 'Resources',
         'nav.contact': '联系我们',
         'hero.title': '智能会计，轻松管理',
         'hero.subtitle': 'AIcountant 结合人工智能与专业会计服务，为您的企业提供高效、准确的财务解决方案',
@@ -174,6 +175,7 @@ const translations = {
         'nav.home': 'Home',
         'nav.about': 'About',
         'nav.services': 'Services',
+        'nav.resources': 'Resources',
         'nav.contact': 'Contact',
         'hero.title': 'Smart Accounting, Easy Management',
         'hero.subtitle': 'AIcountant combines artificial intelligence with professional accounting services to provide efficient and accurate financial solutions for your business',
@@ -341,6 +343,7 @@ const translations = {
         'nav.home': '首頁',
         'nav.about': '關於我們',
         'nav.services': '服務',
+        'nav.resources': 'Resources',
         'nav.contact': '聯繫我們',
         'hero.title': '智能會計，輕鬆管理',
         'hero.subtitle': 'AIcountant 結合人工智能與專業會計服務，為您的企業提供高效、準確的財務解決方案',
@@ -505,8 +508,16 @@ const translations = {
     }
 };
 
-// 当前语言
-let currentLang = localStorage.getItem('aicountant-lang') || 'zh';
+// 当前语言（默認英文）
+let currentLang = localStorage.getItem('aicountant-lang') || 'en';
+
+// ==================== 
+// 语言配置
+const langConfig = {
+    'en': { flag: '🇺🇸', name: 'English' },
+    'zh': { flag: '🇨🇳', name: '简体中文' },
+    'zh-TW': { flag: '🇭🇰', name: '繁體中文' }
+};
 
 // ==================== 
 // 语言切换功能
@@ -515,8 +526,16 @@ function setLanguage(lang) {
     currentLang = lang;
     localStorage.setItem('aicountant-lang', lang);
     
-    // 更新按钮状态
-    document.querySelectorAll('.lang-btn').forEach(btn => {
+    // 更新下拉選單顯示
+    const currentBtn = document.getElementById('langCurrent');
+    if (currentBtn) {
+        const config = langConfig[lang];
+        currentBtn.querySelector('.lang-flag').textContent = config.flag;
+        currentBtn.querySelector('.lang-name').textContent = config.name;
+    }
+    
+    // 更新下拉選項狀態
+    document.querySelectorAll('.lang-option').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.lang === lang);
     });
     
@@ -540,15 +559,36 @@ function setLanguage(lang) {
     document.title = titles[lang];
 }
 
-// 语言按钮点击事件
-document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        setLanguage(btn.dataset.lang);
-    });
-});
-
-// 页面加载时应用保存的语言
+// 语言下拉選單功能
 document.addEventListener('DOMContentLoaded', () => {
+    const langCurrent = document.getElementById('langCurrent');
+    const langOptions = document.getElementById('langOptions');
+    
+    if (langCurrent && langOptions) {
+        // 切換下拉選單顯示
+        langCurrent.addEventListener('click', (e) => {
+            e.stopPropagation();
+            langCurrent.classList.toggle('active');
+            langOptions.classList.toggle('active');
+        });
+        
+        // 選擇語言
+        document.querySelectorAll('.lang-option').forEach(btn => {
+            btn.addEventListener('click', () => {
+                setLanguage(btn.dataset.lang);
+                langOptions.classList.remove('active');
+                langCurrent.classList.remove('active');
+            });
+        });
+        
+        // 點擊外部關閉
+        document.addEventListener('click', () => {
+            langOptions.classList.remove('active');
+            langCurrent.classList.remove('active');
+        });
+    }
+    
+    // 應用當前語言
     setLanguage(currentLang);
 });
 

@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resources - AIcountant | Business Guides & Insights</title>
+    <meta name="description" content="Explore AIcountant's resources hub featuring Q&A, business guides, tax tips, and industry insights for Hong Kong startups and SMEs.">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Resources page specific styles */
+        .resources-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 120px 0 80px;
+            text-align: center;
+            color: white;
+        }
+        
+        .resources-hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .resources-hero p {
+            font-size: 20px;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .resources-nav {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 20px 0;
+            position: sticky;
+            top: 70px;
+            z-index: 100;
+        }
+        
+        .resources-nav-list {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            list-style: none;
+        }
+        
+        .resources-nav-list a {
+            color: #666;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 0;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .resources-nav-list a:hover,
+        .resources-nav-list a.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        
+        /* Q&A Section */
+        .qa-section {
+            padding: 80px 0;
+            background: #f8f9fa;
+        }
+        
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .faq-item {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .faq-question {
+            padding: 25px 30px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+        
+        .faq-question:hover {
+            background: #f8f9fa;
+        }
+        
+        .faq-question h3 {
+            font-size: 18px;
+            color: #333;
+            margin: 0;
+        }
+        
+        .faq-toggle {
+            font-size: 24px;
+            color: #667eea;
+            transition: transform 0.3s;
+        }
+        
+        .faq-item.active .faq-toggle {
+            transform: rotate(45deg);
+        }
+        
+        .faq-answer {
+            padding: 0 30px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .faq-item.active .faq-answer {
+            padding: 0 30px 25px;
+            max-height: 500px;
+        }
+        
+        .faq-answer p {
+            color: #666;
+            line-height: 1.8;
+        }
+        
+        /* Blog Section */
+        .blog-section {
+            padding: 80px 0;
+        }
+        
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+        
+        .blog-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+        }
+        
+        .blog-image {
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+        }
+        
+        .blog-content {
+            padding: 25px;
+        }
+        
+        .blog-category {
+            display: inline-block;
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .blog-card h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: #333;
+            line-height: 1.4;
+        }
+        
+        .blog-card p {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .blog-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #999;
+            font-size: 14px;
+        }
+        
+        /* Guides Section */
+        .guides-section {
+            padding: 80px 0;
+            background: #f8f9fa;
+        }
+        
+        .guides-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+        
+        .guide-card {
+            background: white;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            display: flex;
+            gap: 25px;
+            align-items: flex-start;
+        }
+        
+        .guide-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+        
+        .guide-content h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .guide-content p {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .guide-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .guide-link:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .blog-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .guides-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .resources-hero h1 {
+                font-size: 32px;
+            }
+            
+            .resources-nav-list {
+                gap: 20px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">AIcountant</div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#services">Services</a></li>
+                <li><a href="resources.html" class="active">Resources</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+            <!-- 语言切换器 -->
+            <div class="language-dropdown">
+                <button class="lang-current" id="langCurrent">
+                    <span class="lang-flag">🇺🇸</span>
+                    <span class="lang-name">English</span>
+                    <span class="lang-arrow">▼</span>
+                </button>
+                <div class="lang-options" id="langOptions">
+                    <button class="lang-option" data-lang="en">
+                        <span class="lang-flag">🇺🇸</span>
+                        <span class="lang-name">English</span>
+                    </button>
+                    <button class="lang-option" data-lang="zh">
+                        <span class="lang-flag">🇨🇳</span>
+                        <span class="lang-name">简体中文</span>
+                    </button>
+                    <button class="lang-option" data-lang="zh-TW">
+                        <span class="lang-flag">🇭🇰</span>
+                        <span class="lang-name">繁體中文</span>
+                    </button>
+                </div>
+            </div>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="resources-hero">
+        <div class="container">
+            <h1>Resources Hub</h1>
+            <p>Expert guides, tax tips, and business insights for Hong Kong entrepreneurs and SMEs.</p>
+        </div>
+    </section>
+
+    <!-- Resources Navigation -->
+    <nav class="resources-nav">
+        <div class="container">
+            <ul class="resources-nav-list">
+                <li><a href="#qa" class="active">Q&A</a></li>
+                <li><a href="#guides">Guides</a></li>
+                <li><a href="#blog">Blog</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Q&A Section -->
+    <section id="qa" class="qa-section">
+        <div class="container">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How long does it take to register a company in Hong Kong?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>With AIcountant, company registration typically takes 1-3 business days. Our streamlined digital process and close relationship with the Companies Registry ensure quick processing. Once we receive all required documents, we can often complete the registration within 24 hours.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>What documents do I need to register a company?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>For company registration in Hong Kong, you'll need: (1) Copy of passport or HKID for all directors and shareholders, (2) Proof of address (utility bill or bank statement within 3 months), (3) Proposed company name, and (4) Business nature description. For non-residents, additional documents may be required.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Do I need a physical office address in Hong Kong?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, every Hong Kong company must have a registered office address. However, it doesn't need to be a physical office you work from. AIcountant provides registered office address services starting from HK$199/month, which satisfies legal requirements while you work from anywhere.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>What are the annual compliance requirements for a HK company?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Hong Kong companies must: (1) File Annual Return with Companies Registry (within 42 days of anniversary), (2) Renew Business Registration Certificate, (3) Hold Annual General Meeting, (4) Maintain proper accounting records, and (5) File Profits Tax Return. Our company secretary service handles all of these for you.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Can foreigners own 100% of a Hong Kong company?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! Hong Kong allows 100% foreign ownership of companies. There are no restrictions on nationality for directors or shareholders. You don't need to be a Hong Kong resident to incorporate a company here. However, you will need at least one director (can be the same person as shareholder).</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>What taxes does a Hong Kong company need to pay?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Hong Kong has a territorial tax system with competitive rates: Profits Tax (8.25% for first HK$2M, 16.5% thereafter for corporations), No VAT/GST, No capital gains tax, No dividend tax, No withholding tax on dividends. Only profits derived from Hong Kong are taxable.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Guides Section -->
+    <section id="guides" class="guides-section">
+        <div class="container">
+            <h2 class="section-title">Business Guides</h2>
+            
+            <div class="guides-grid">
+                <div class="guide-card">
+                    <div class="guide-icon">📘</div>
+                    <div class="guide-content">
+                        <h3>Hong Kong Company Registration Guide</h3>
+                        <p>Step-by-step guide to incorporating your company in Hong Kong, from name selection to business registration.</p>
+                        <a href="#" class="guide-link">Read Guide →</a>
+                    </div>
+                </div>
+
+                <div class="guide-card">
+                    <div class="guide-icon">📊</div>
+                    <div class="guide-content">
+                        <h3>Tax Planning for Startups</h3>
+                        <p>Essential tax strategies for new businesses in Hong Kong. Learn how to optimize your tax position legally.</p>
+                        <a href="#" class="guide-link">Read Guide →</a>
+                    </div>
+                </div>
+
+                <div class="guide-card">
+                    <div class="guide-icon">📋</div>
+                    <div class="guide-content">
+                        <h3>Annual Compliance Checklist</h3>
+                        <p>Complete checklist of annual filing requirements and deadlines for Hong Kong companies.</p>
+                        <a href="#" class="guide-link">Read Guide →</a>
+                    </div>
+                </div>
+
+                <div class="guide-card">
+                    <div class="guide-icon">💼</div>
+                    <div class="guide-content">
+                        <h3>Opening a Business Bank Account</h3>
+                        <p>Tips for successfully opening a corporate bank account in Hong Kong, including required documents and common challenges.</p>
+                        <a href="#" class="guide-link">Read Guide →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section id="blog" class="blog-section">
+        <div class="container">
+            <h2 class="section-title">Latest Insights</h2>
+            
+            <div class="blog-grid">
+                <article class="blog-card">
+                    <div class="blog-image">🚀</div>
+                    <div class="blog-content">
+                        <span class="blog-category">Startup Tips</span>
+                        <h3>5 Common Mistakes When Starting a Business in Hong Kong</h3>
+                        <p>Avoid these pitfalls that many new entrepreneurs face when incorporating in Hong Kong. Learn from real case studies...</p>
+                        <div class="blog-meta">
+                            <span>March 2024</span>
+                            <span>5 min read</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="blog-card">
+                    <div class="blog-image">💡</div>
+                    <div class="blog-content">
+                        <span class="blog-category">Tax Tips</span>
+                        <h3>2024 Hong Kong Tax Updates: What You Need to Know</h3>
+                        <p>Latest changes to Hong Kong tax regulations and how they affect your business. Includes practical compliance tips...</p>
+                        <div class="blog-meta">
+                            <span>February 2024</span>
+                            <span>8 min read</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="blog-card">
+                    <div class="blog-image">🌐</div>
+                    <div class="blog-content">
+                        <span class="blog-category">Business Strategy</span>
+                        <h3>Why Foreign Entrepreneurs Choose Hong Kong</h3>
+                        <p>Exploring the strategic advantages of incorporating in Hong Kong: from tax benefits to international banking...</p>
+                        <div class="blog-meta">
+                            <span>January 2024</span>
+                            <span>6 min read</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="contact">
+        <div class="container">
+            <div class="contact-content" style="text-align: center; max-width: 600px; margin: 0 auto;">
+                <h2 style="font-size: 32px; margin-bottom: 20px;">Need Personalized Advice?</h2>
+                <p style="color: #666; margin-bottom: 30px;">Our experts are ready to help with your specific business questions. Schedule a free consultation today.</p>
+                <a href="index.html#contact" class="btn btn-primary" style="font-size: 18px; padding: 16px 40px;">Book Free Consultation</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 AIcountant. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    
+    <script>
+        // FAQ Toggle Functionality
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const item = question.parentElement;
+                const isActive = item.classList.contains('active');
+                
+                // Close all other items
+                document.querySelectorAll('.faq-item').forEach(faq => {
+                    faq.classList.remove('active');
+                });
+                
+                // Toggle current item
+                if (!isActive) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Resources nav active state
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.resources-nav-list a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
