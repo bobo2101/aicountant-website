@@ -6,6 +6,51 @@
     <title>發票管理 - AIcountant Portal</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="portal.css">
+    <style>
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .invoice-table th,
+        .invoice-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .invoice-table th {
+            font-weight: 600;
+            color: #666;
+            font-size: 13px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-draft {
+            background: #f5f5f5;
+            color: #666;
+        }
+        .status-sent {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        .status-paid {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        .status-overdue {
+            background: #ffebee;
+            color: #c62828;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: #666;
+        }
+    </style>
 </head>
 <body class="portal-body">
     <div class="portal-layout">
@@ -27,59 +72,225 @@
                 <div class="user-info">
                     <div class="user-avatar">👤</div>
                     <div class="user-details">
-                        <span class="user-name" id="userName">客戶名稱</span>
+                        <span class="user-name" id="userName">載入中...</span>
                         <span class="user-role">企業帳戶</span>
                     </div>
-                    <button class="logout-btn" onclick="logout()" title="登出">🚪</button>
+                    <button class="logout-btn" onclick="handleLogout()" title="登出">🚪</button>
                 </div>
             </div>
         </aside>
+
         <main class="main-content">
             <header class="page-header">
                 <h1>發票管理</h1>
                 <p>創建和管理您的發票</p>
             </header>
+
             <div class="content-card">
                 <div class="card-header">
                     <h3>發票列表</h3>
-                    <button class="btn btn-primary" style="padding: 8px 16px; font-size: 13px;">+ 創建發票</button>
+                    <button class="btn btn-primary" style="padding: 8px 16px; font-size: 13px;" onclick="showCreateModal()">+ 創建發票</button>
                 </div>
                 <div class="card-body">
-                    <p style="color: #666; text-align: center; padding: 48px 0;">發票管理功能開發中...</p>
+                    <table class="invoice-table" id="invoicesTable">
+                        <thead>
+                            <tr>
+                                <th>發票編號</th>
+                                <th>客戶</th>
+                                <th>日期</th>
+                                <th>到期日</th>
+                                <th>金額</th>
+                                <th>狀態</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invoicesBody">
+                            <tr>
+                                <td colspan="7" class="empty-state">載入中...</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </main>
     </div>
+
+    <!-- Load Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="../js/supabase-client.js"></script>
+
     <script>
-        // Check if user is logged in
-        (function() {
-            const isLoggedIn = localStorage.getItem('aicountant-portal-logged-in');
-            console.log('Page - Login check:', isLoggedIn);
+        // ============================================
+        // AUTHENTICATION CHECK
+        // ============================================
+        
+        let currentUser = null;
+        let isDemoMode = false;
+        
+        // Check authentication on page load
+        (async function init() {
+            try {
+                // Check if Supabase is configured
+                if (SUPABASE_URL.includes('your-project-ref') || SUPABASE_ANON_KEY.includes('your-anon-key')) {
+                    console.log('⚠️ Supabase not configured, using demo mode');
+                    isDemoMode = true;
+                    
+                    // Check localStorage fallback
+                    const localLoggedIn = localStorage.getItem('aicountant-portal-logged-in') === 'true';
+                    if (!localLoggedIn) {
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    
+                    const userEmail = localStorage.getItem('aicountant-portal-user') || 'Demo User';
+                    currentUser = { email: userEmail };
+                    loadDemoInvoices();
+                } else {
+                    // Real Supabase auth check
+                    const user = await getCurrentUser();
+                    if (!user) {
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    
+                    currentUser = user;
+                    loadInvoices();
+                }
+                
+                // Display user info
+                updateUserDisplay();
+                
+            } catch (error) {
+                console.error('Initialization error:', error);
+            }
+        })();
+        
+        // ============================================
+        // LOAD INVOICES
+        // ============================================
+        
+        async function loadInvoices() {
+            try {
+                const { data: invoices, error } = await supabaseClient
+                    .from('invoices')
+                    .select('*')
+                    .order('issue_date', { ascending: false });
+                
+                if (error) throw error;
+                
+                renderInvoices(invoices || []);
+            } catch (error) {
+                console.error('Error loading invoices:', error);
+                renderEmptyInvoices();
+            }
+        }
+        
+        function renderInvoices(invoices) {
+            const tbody = document.getElementById('invoicesBody');
             
-            if (isLoggedIn !== 'true') {
-                console.log('Not logged in, redirecting to login...');
-                window.location.href = 'login.html';
+            if (!invoices || invoices.length === 0) {
+                renderEmptyInvoices();
                 return;
             }
             
-            // Display user name
-            const userEmail = localStorage.getItem('aicountant-portal-user');
-            console.log('Page - User:', userEmail);
-            
-            if (userEmail) {
-                const userNameEl = document.getElementById('userName');
-                if (userNameEl) {
-                    userNameEl.textContent = userEmail.split('@')[0];
-                }
+            tbody.innerHTML = invoices.map(inv => `
+                <tr>
+                    <td>${escapeHtml(inv.invoice_number)}</td>
+                    <td>${escapeHtml(inv.client_name)}</td>
+                    <td>${formatDate(inv.issue_date)}</td>
+                    <td>${formatDate(inv.due_date)}</td>
+                    <td>HK$ ${parseFloat(inv.total_amount).toLocaleString()}</td>
+                    <td><span class="status-badge status-${inv.status}">${getStatusLabel(inv.status)}</span></td>
+                    <td>
+                        <button class="btn-icon" onclick="viewInvoice('${inv.id}')" title="查看">👁️</button>
+                        <button class="btn-icon" onclick="downloadInvoice('${inv.id}')" title="下載">⬇️</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function renderEmptyInvoices() {
+            document.getElementById('invoicesBody').innerHTML = `
+                <tr>
+                    <td colspan="7" class="empty-state">
+                        <div style="font-size: 32px; margin-bottom: 16px;">🧾</div>
+                        <p>暫無發票</p>
+                        <p style="font-size: 13px; margin-top: 8px;">點擊「創建發票」添加第一張發票</p>
+                    </td>
+                </tr>
+            `;
+        }
+        
+        function loadDemoInvoices() {
+            const demoInvoices = [
+                { id: '1', invoice_number: 'INV-2024-001', client_name: 'ABC科技有限公司', issue_date: '2024-03-15', due_date: '2024-04-15', total_amount: 45000, status: 'sent' },
+                { id: '2', invoice_number: 'INV-2024-002', client_name: 'XYZ顧問公司', issue_date: '2024-03-10', due_date: '2024-04-10', total_amount: 28000, status: 'paid' },
+                { id: '3', invoice_number: 'INV-2024-003', client_name: '客戶C有限公司', issue_date: '2024-03-05', due_date: '2024-04-05', total_amount: 15000, status: 'overdue' }
+            ];
+            renderInvoices(demoInvoices);
+        }
+        
+        // ============================================
+        // ACTIONS
+        // ============================================
+        
+        function showCreateModal() {
+            if (isDemoMode) {
+                alert('演示模式：創建發票功能需要配置 Supabase');
+            } else {
+                alert('創建發票功能開發中...');
             }
-        })();
-
-        // Logout function
-        function logout() {
-            console.log('Logging out...');
-            localStorage.removeItem('aicountant-portal-logged-in');
-            localStorage.removeItem('aicountant-portal-user');
-            window.location.href = 'login.html';
+        }
+        
+        function viewInvoice(id) {
+            alert('查看發票：' + id);
+        }
+        
+        function downloadInvoice(id) {
+            alert('下載發票：' + id);
+        }
+        
+        // ============================================
+        // HELPER FUNCTIONS
+        // ============================================
+        
+        function updateUserDisplay() {
+            if (!currentUser) return;
+            const userName = currentUser.email ? currentUser.email.split('@')[0] : '用戶';
+            document.getElementById('userName').textContent = userName;
+        }
+        
+        function handleLogout() {
+            if (isDemoMode) {
+                localStorage.removeItem('aicountant-portal-logged-in');
+                localStorage.removeItem('aicountant-portal-user');
+                window.location.href = 'login.html';
+            } else {
+                signOut();
+            }
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('zh-HK');
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function getStatusLabel(status) {
+            const labels = {
+                'draft': '草稿',
+                'sent': '已發送',
+                'paid': '已付款',
+                'overdue': '逾期',
+                'cancelled': '已取消'
+            };
+            return labels[status] || status;
         }
     </script>
 </body>

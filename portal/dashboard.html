@@ -7,8 +7,62 @@
     <meta name="description" content="AIcountant 客戶儀表板，管理您的財務數據和會計記錄。">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="portal.css">
+    <style>
+        .loading-skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+        }
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .stat-card-value.loading {
+            height: 36px;
+            width: 150px;
+        }
+        .connection-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+        .connection-status.connected {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        .connection-status.disconnected {
+            background: #ffebee;
+            color: #c62828;
+        }
+        .connection-status.demo {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: #666;
+        }
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+    </style>
 </head>
 <body class="portal-body">
+    <!-- Connection Status -->
+    <div class="connection-status demo" id="connectionStatus">
+        演示模式
+    </div>
+
     <div class="portal-layout">
         <!-- Sidebar -->
         <aside class="sidebar">
@@ -29,10 +83,10 @@
                 <div class="user-info">
                     <div class="user-avatar">👤</div>
                     <div class="user-details">
-                        <span class="user-name" id="userName">客戶名稱</span>
-                        <span class="user-role">企業帳戶</span>
+                        <span class="user-name" id="userName">載入中...</span>
+                        <span class="user-role" id="userRole">企業帳戶</span>
                     </div>
-                    <button class="logout-btn" onclick="logout()" title="登出">🚪</button>
+                    <button class="logout-btn" onclick="handleLogout()" title="登出">🚪</button>
                 </div>
             </div>
         </aside>
@@ -41,7 +95,7 @@
         <main class="main-content">
             <header class="page-header">
                 <h1>儀表板</h1>
-                <p>歡迎回來，這是您的財務概覽</p>
+                <p id="welcomeMessage">載入中...</p>
             </header>
 
             <!-- Stats Grid -->
@@ -51,32 +105,40 @@
                         <span class="stat-card-title">本月收入</span>
                         <div class="stat-card-icon">💰</div>
                     </div>
-                    <div class="stat-card-value">HK$ 128,500</div>
-                    <div class="stat-card-change">+12.5% 較上月</div>
+                    <div class="stat-card-value" id="incomeValue">
+                        <span class="loading-skeleton" style="display:inline-block;height:36px;width:150px;"></span>
+                    </div>
+                    <div class="stat-card-change" id="incomeChange">計算中...</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-card-header">
                         <span class="stat-card-title">本月支出</span>
                         <div class="stat-card-icon">💸</div>
                     </div>
-                    <div class="stat-card-value">HK$ 45,200</div>
-                    <div class="stat-card-change negative">+5.3% 較上月</div>
+                    <div class="stat-card-value" id="expenseValue">
+                        <span class="loading-skeleton" style="display:inline-block;height:36px;width:150px;"></span>
+                    </div>
+                    <div class="stat-card-change negative" id="expenseChange">計算中...</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-card-header">
                         <span class="stat-card-title">淨利潤</span>
                         <div class="stat-card-icon">📈</div>
                     </div>
-                    <div class="stat-card-value">HK$ 83,300</div>
-                    <div class="stat-card-change">+18.2% 較上月</div>
+                    <div class="stat-card-value" id="profitValue">
+                        <span class="loading-skeleton" style="display:inline-block;height:36px;width:150px;"></span>
+                    </div>
+                    <div class="stat-card-change" id="profitChange">計算中...</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-card-header">
                         <span class="stat-card-title">待處理發票</span>
                         <div class="stat-card-icon">🧾</div>
                     </div>
-                    <div class="stat-card-value">8</div>
-                    <div class="stat-card-change">總額 HK$ 24,000</div>
+                    <div class="stat-card-value" id="pendingInvoices">
+                        <span class="loading-skeleton" style="display:inline-block;height:36px;width:80px;"></span>
+                    </div>
+                    <div class="stat-card-change" id="pendingAmount">計算中...</div>
                 </div>
             </div>
 
@@ -99,41 +161,12 @@
                                     <th>狀態</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="recentTransactions">
+                                <!-- Loading state -->
                                 <tr>
-                                    <td>2024-03-10</td>
-                                    <td>客戶付款 - ABC公司</td>
-                                    <td>收入</td>
-                                    <td>+HK$ 15,000</td>
-                                    <td><span class="status-badge status-completed">已完成</span></td>
-                                </tr>
-                                <tr>
-                                    <td>2024-03-09</td>
-                                    <td>辦公室租金</td>
-                                    <td>支出</td>
-                                    <td>-HK$ 8,500</td>
-                                    <td><span class="status-badge status-completed">已完成</span></td>
-                                </tr>
-                                <tr>
-                                    <td>2024-03-08</td>
-                                    <td>軟件訂閱 - QuickBooks</td>
-                                    <td>支出</td>
-                                    <td>-HK$ 450</td>
-                                    <td><span class="status-badge status-completed">已完成</span></td>
-                                </tr>
-                                <tr>
-                                    <td>2024-03-07</td>
-                                    <td>客戶付款 - XYZ有限公司</td>
-                                    <td>收入</td>
-                                    <td>+HK$ 28,000</td>
-                                    <td><span class="status-badge status-pending">待入帳</span></td>
-                                </tr>
-                                <tr>
-                                    <td>2024-03-06</td>
-                                    <td>員工薪資</td>
-                                    <td>支出</td>
-                                    <td>-HK$ 35,000</td>
-                                    <td><span class="status-badge status-processing">處理中</span></td>
+                                    <td colspan="5" class="empty-state">
+                                        <div class="loading-skeleton" style="height: 200px; width: 100%;"></div>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -156,17 +189,17 @@
                             <a href="reports.html" class="btn btn-secondary" style="text-align: center;">
                                 📊 生成報告
                             </a>
-                            <a href="#" class="btn btn-secondary" style="text-align: center;" onclick="alert('聯繫會計師功能即將推出')">
+                            <button class="btn btn-secondary" style="text-align: center;" onclick="showContactModal()">
                                 💬 聯繫會計師
-                            </a>
+                            </button>
                         </div>
                         
                         <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #f0f0f0;">
                             <h4 style="font-size: 14px; color: #666; margin-bottom: 12px;">本日待辦</h4>
-                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div style="display: flex; flex-direction: column; gap: 8px;" id="todoList">
                                 <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
                                     <input type="checkbox" style="width: 16px; height: 16px;">
-                                    <span>審核3份新發票</span>
+                                    <span>審核新交易記錄</span>
                                 </label>
                                 <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
                                     <input type="checkbox" style="width: 16px; height: 16px;">
@@ -184,37 +217,323 @@
         </main>
     </div>
 
+    <!-- Contact Modal -->
+    <div id="contactModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: white; border-radius: 16px; padding: 32px; max-width: 400px; width: 90%;">
+            <h3 style="margin-bottom: 16px;">聯繫會計師</h3>
+            <p style="color: #666; margin-bottom: 24px;">我們的會計師團隊將在24小時內回覆您。</p>
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button class="btn btn-secondary" onclick="closeContactModal()">取消</button>
+                <button class="btn btn-primary" onclick="submitContact()">發送訊息</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="../js/supabase-client.js"></script>
+
     <script>
-        // Check if user is logged in
-        (function() {
-            const isLoggedIn = localStorage.getItem('aicountant-portal-logged-in');
-            console.log('Dashboard - Login check:', isLoggedIn);
+        // ============================================
+        // AUTHENTICATION CHECK
+        // ============================================
+        
+        let currentUser = null;
+        let isDemoMode = false;
+        
+        // Check authentication on page load
+        (async function init() {
+            try {
+                // Check if Supabase is configured
+                if (SUPABASE_URL.includes('your-project-ref') || SUPABASE_ANON_KEY.includes('your-anon-key')) {
+                    console.log('⚠️ Supabase not configured, using demo mode');
+                    isDemoMode = true;
+                    document.getElementById('connectionStatus').textContent = '演示模式';
+                    document.getElementById('connectionStatus').className = 'connection-status demo';
+                    
+                    // Check localStorage fallback
+                    const localLoggedIn = localStorage.getItem('aicountant-portal-logged-in') === 'true';
+                    if (!localLoggedIn) {
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    
+                    const userEmail = localStorage.getItem('aicountant-portal-user') || 'Demo User';
+                    currentUser = { email: userEmail };
+                    loadDemoData();
+                } else {
+                    // Real Supabase auth check
+                    const user = await getCurrentUser();
+                    if (!user) {
+                        console.log('🔒 Not authenticated, redirecting...');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    
+                    currentUser = user;
+                    console.log('✅ Authenticated as:', user.email);
+                    
+                    document.getElementById('connectionStatus').textContent = '已連接';
+                    document.getElementById('connectionStatus').className = 'connection-status connected';
+                    
+                    loadRealData();
+                }
+                
+                // Display user info
+                updateUserDisplay();
+                
+            } catch (error) {
+                console.error('Initialization error:', error);
+                showError('載入失敗，請重新整理頁面');
+            }
+        })();
+        
+        // ============================================
+        // LOAD DEMO DATA (Fallback Mode)
+        // ============================================
+        
+        function loadDemoData() {
+            // User info
+            document.getElementById('userName').textContent = currentUser.email.split('@')[0];
+            document.getElementById('welcomeMessage').textContent = `歡迎回來，這是您的財務概覽（演示模式）`;
             
-            if (isLoggedIn !== 'true') {
-                console.log('Not logged in, redirecting to login...');
-                window.location.href = 'login.html';
+            // Stats (demo values)
+            document.getElementById('incomeValue').textContent = 'HK$ 128,500';
+            document.getElementById('incomeChange').textContent = '+12.5% 較上月';
+            
+            document.getElementById('expenseValue').textContent = 'HK$ 45,200';
+            document.getElementById('expenseChange').textContent = '+5.3% 較上月';
+            
+            document.getElementById('profitValue').textContent = 'HK$ 83,300';
+            document.getElementById('profitChange').textContent = '+18.2% 較上月';
+            
+            document.getElementById('pendingInvoices').textContent = '8';
+            document.getElementById('pendingAmount').textContent = '總額 HK$ 24,000';
+            
+            // Demo transactions
+            const demoTransactions = [
+                { date: '2024-03-10', description: '客戶付款 - ABC公司', category: '收入', amount: '+HK$ 15,000', status: 'completed' },
+                { date: '2024-03-09', description: '辦公室租金', category: '支出', amount: '-HK$ 8,500', status: 'completed' },
+                { date: '2024-03-08', description: '軟件訂閱 - QuickBooks', category: '支出', amount: '-HK$ 450', status: 'completed' },
+                { date: '2024-03-07', description: '客戶付款 - XYZ有限公司', category: '收入', amount: '+HK$ 28,000', status: 'pending' },
+                { date: '2024-03-06', description: '員工薪資', category: '支出', amount: '-HK$ 35,000', status: 'processing' }
+            ];
+            
+            renderTransactions(demoTransactions);
+        }
+        
+        // ============================================
+        // LOAD REAL DATA (Supabase Mode)
+        // ============================================
+        
+        async function loadRealData() {
+            try {
+                // Get user profile
+                const { data: profile, error: profileError } = await getProfile();
+                if (profileError) {
+                    console.error('Error fetching profile:', profileError);
+                }
+                
+                const displayName = profile?.full_name || profile?.company_name || currentUser.email.split('@')[0];
+                document.getElementById('userName').textContent = displayName;
+                document.getElementById('welcomeMessage').textContent = `歡迎回來，${displayName}！這是您的財務概覽`;
+                
+                // Get dashboard stats
+                const { data: stats, error: statsError } = await getDashboardStats();
+                if (statsError) {
+                    console.error('Error fetching stats:', statsError);
+                    // Fall back to zeros
+                    updateStats({ income: 0, expenses: 0, profit: 0, pendingInvoices: 0 });
+                } else {
+                    updateStats(stats);
+                }
+                
+                // Get recent transactions
+                const { data: transactions, error: transError } = await getTransactions({ limit: 5 });
+                if (transError) {
+                    console.error('Error fetching transactions:', transError);
+                    renderEmptyTransactions();
+                } else if (transactions && transactions.length > 0) {
+                    renderTransactions(transactions.map(t => ({
+                        date: t.transaction_date,
+                        description: t.description,
+                        category: t.category,
+                        amount: t.type === 'income' ? `+HK$ ${t.amount.toLocaleString()}` : `-HK$ ${Math.abs(t.amount).toLocaleString()}`,
+                        status: t.status
+                    })));
+                } else {
+                    renderEmptyTransactions();
+                }
+                
+            } catch (error) {
+                console.error('Error loading real data:', error);
+                showError('載入數據時發生錯誤');
+            }
+        }
+        
+        function updateStats(stats) {
+            // Format currency
+            const formatCurrency = (amount) => `HK$ ${amount.toLocaleString()}`;
+            
+            document.getElementById('incomeValue').textContent = formatCurrency(stats.income || 0);
+            document.getElementById('incomeChange').textContent = '本月總收入';
+            
+            document.getElementById('expenseValue').textContent = formatCurrency(stats.expenses || 0);
+            document.getElementById('expenseChange').textContent = '本月總支出';
+            
+            document.getElementById('profitValue').textContent = formatCurrency(stats.profit || 0);
+            const profitClass = (stats.profit || 0) >= 0 ? '' : 'negative';
+            document.getElementById('profitChange').textContent = (stats.profit || 0) >= 0 ? '盈利' : '虧損';
+            document.getElementById('profitChange').className = `stat-card-change ${profitClass}`;
+            
+            document.getElementById('pendingInvoices').textContent = stats.pendingInvoices || 0;
+            document.getElementById('pendingAmount').textContent = stats.pendingInvoices > 0 ? '待處理發票' : '無待處理';
+        }
+        
+        // ============================================
+        // RENDER TRANSACTIONS
+        // ============================================
+        
+        function renderTransactions(transactions) {
+            const tbody = document.getElementById('recentTransactions');
+            
+            if (!transactions || transactions.length === 0) {
+                renderEmptyTransactions();
                 return;
             }
             
-            // Display user name
-            const userEmail = localStorage.getItem('aicountant-portal-user');
-            console.log('Dashboard - User:', userEmail);
-            
-            if (userEmail) {
-                const userNameEl = document.getElementById('userName');
-                if (userNameEl) {
-                    userNameEl.textContent = userEmail.split('@')[0];
-                }
-            }
-        })();
-
-        // Logout function
-        function logout() {
-            console.log('Logging out...');
-            localStorage.removeItem('aicountant-portal-logged-in');
-            localStorage.removeItem('aicountant-portal-user');
-            window.location.href = 'login.html';
+            tbody.innerHTML = transactions.map(t => `
+                <tr>
+                    <td>${formatDate(t.date)}</td>
+                    <td>${escapeHtml(t.description)}</td>
+                    <td>${escapeHtml(t.category)}</td>
+                    <td style="color: ${t.amount.startsWith('+') ? '#2e7d32' : '#c62828'}; font-weight: 500;">${t.amount}</td>
+                    <td><span class="status-badge ${getStatusClass(t.status)}">${getStatusLabel(t.status)}</span></td>
+                </tr>
+            `).join('');
         }
+        
+        function renderEmptyTransactions() {
+            const tbody = document.getElementById('recentTransactions');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📊</div>
+                            <p>暫無交易記錄</p>
+                            <p style="font-size: 13px; margin-top: 8px;">開始記錄您的第一筆交易</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+        
+        // ============================================
+        // HELPER FUNCTIONS
+        // ============================================
+        
+        function updateUserDisplay() {
+            if (!currentUser) return;
+            
+            const userName = currentUser.email ? currentUser.email.split('@')[0] : '用戶';
+            document.getElementById('userName').textContent = userName;
+        }
+        
+        function handleLogout() {
+            if (isDemoMode) {
+                // Demo mode logout
+                localStorage.removeItem('aicountant-portal-logged-in');
+                localStorage.removeItem('aicountant-portal-user');
+                window.location.href = 'login.html';
+            } else {
+                // Supabase logout
+                signOut();
+            }
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('zh-HK');
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function getStatusClass(status) {
+            const statusClasses = {
+                'completed': 'status-completed',
+                'pending': 'status-pending',
+                'processing': 'status-processing',
+                'cancelled': 'status-cancelled',
+                'sent': 'status-pending',
+                'paid': 'status-completed',
+                'overdue': 'status-cancelled',
+                'draft': 'status-processing'
+            };
+            return statusClasses[status] || 'status-pending';
+        }
+        
+        function getStatusLabel(status) {
+            const statusLabels = {
+                'completed': '已完成',
+                'pending': '待處理',
+                'processing': '處理中',
+                'cancelled': '已取消',
+                'sent': '已發送',
+                'paid': '已付款',
+                'overdue': '逾期',
+                'draft': '草稿'
+            };
+            return statusLabels[status] || status;
+        }
+        
+        function showError(message) {
+            // Simple alert for now, could be a toast notification
+            console.error(message);
+        }
+        
+        // ============================================
+        // MODAL FUNCTIONS
+        // ============================================
+        
+        function showContactModal() {
+            document.getElementById('contactModal').style.display = 'flex';
+        }
+        
+        function closeContactModal() {
+            document.getElementById('contactModal').style.display = 'none';
+        }
+        
+        function submitContact() {
+            alert('訊息已發送！我們的會計師將在24小時內回覆您。');
+            closeContactModal();
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('contactModal').addEventListener('click', (e) => {
+            if (e.target.id === 'contactModal') {
+                closeContactModal();
+            }
+        });
+        
+        // ============================================
+        // REAL-TIME SUBSCRIPTION (Optional)
+        // ============================================
+        
+        // Subscribe to new transactions (if Supabase is connected)
+        if (!isDemoMode && typeof onAuthStateChange === 'function') {
+            onAuthStateChange((event, session) => {
+                if (event === 'SIGNED_OUT') {
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+        
+        console.log('📊 Dashboard initialized');
     </script>
 </body>
 </html>

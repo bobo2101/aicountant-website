@@ -7,6 +7,139 @@
     <meta name="description" content="AIcountant 文件管理系統，上傳和掃描您的財務文件。">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="portal.css">
+    <style>
+        .upload-zone {
+            border: 2px dashed #e0e0e0;
+            border-radius: 12px;
+            padding: 48px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .upload-zone:hover {
+            border-color: #000;
+            background: #fafafa;
+        }
+        .upload-zone.dragover {
+            border-color: #000;
+            background: #f0f0f0;
+        }
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        .upload-text {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .upload-hint {
+            font-size: 13px;
+            color: #666;
+        }
+        .document-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .document-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .document-item:hover {
+            background: #f0f0f0;
+        }
+        .document-icon {
+            font-size: 32px;
+        }
+        .document-info {
+            flex: 1;
+        }
+        .document-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        .document-meta {
+            font-size: 13px;
+            color: #666;
+        }
+        .document-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .btn-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .btn-icon:hover {
+            background: #e0e0e0;
+        }
+        .scan-preview {
+            text-align: center;
+            padding: 32px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+        .scan-preview-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+        .scan-preview-text {
+            color: #666;
+            margin-bottom: 24px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: #666;
+        }
+        .processing-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .processing-badge.pending {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        .processing-badge.completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        .upload-progress {
+            margin-top: 16px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: none;
+        }
+        .upload-progress.active {
+            display: block;
+        }
+        .progress-bar {
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #000;
+            transition: width 0.3s;
+        }
+    </style>
 </head>
 <body class="portal-body">
     <div class="portal-layout">
@@ -29,10 +162,10 @@
                 <div class="user-info">
                     <div class="user-avatar">👤</div>
                     <div class="user-details">
-                        <span class="user-name" id="userName">客戶名稱</span>
+                        <span class="user-name" id="userName">載入中...</span>
                         <span class="user-role">企業帳戶</span>
                     </div>
-                    <button class="logout-btn" onclick="logout()" title="登出">🚪</button>
+                    <button class="logout-btn" onclick="handleLogout()" title="登出">🚪</button>
                 </div>
             </div>
         </aside>
@@ -56,6 +189,17 @@
                         <div class="upload-hint">支持 PDF、JPG、PNG 格式，單個文件最大 10MB</div>
                         <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
                     </div>
+                    
+                    <!-- Upload Progress -->
+                    <div class="upload-progress" id="uploadProgress">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span id="uploadFileName">Uploading...</span>
+                            <span id="uploadPercent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -66,65 +210,21 @@
                     <div class="card-header">
                         <h3>最近文件</h3>
                         <div style="display: flex; gap: 8px;">
-                            <select class="btn btn-secondary" style="padding: 8px 16px; font-size: 13px; border: 1px solid #e0e0e0; background: white;">
-                                <option>全部類型</option>
-                                <option>發票</option>
-                                <option>收據</option>
-                                <option>銀行對帳單</option>
-                                <option>合同</option>
+                            <select id="filterType" class="btn btn-secondary" style="padding: 8px 16px; font-size: 13px; border: 1px solid #e0e0e0; background: white;" onchange="loadDocuments()">
+                                <option value="">全部類型</option>
+                                <option value="invoice">發票</option>
+                                <option value="receipt">收據</option>
+                                <option value="bank_statement">銀行對帳單</option>
+                                <option value="contract">合同</option>
                             </select>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="document-list" id="documentList">
-                            <!-- Sample documents -->
-                            <div class="document-item">
-                                <div class="document-icon">📄</div>
-                                <div class="document-info">
-                                    <div class="document-name">2024年3月銀行對帳單.pdf</div>
-                                    <div class="document-meta">PDF • 2.4 MB • 2024-03-10 14:30</div>
-                                </div>
-                                <div class="document-actions">
-                                    <button class="btn-icon" title="查看">👁️</button>
-                                    <button class="btn-icon" title="下載">⬇️</button>
-                                    <button class="btn-icon" title="刪除">🗑️</button>
-                                </div>
-                            </div>
-                            <div class="document-item">
-                                <div class="document-icon">🧾</div>
-                                <div class="document-info">
-                                    <div class="document-name">辦公室租金收據_202403.jpg</div>
-                                    <div class="document-meta">JPG • 1.2 MB • 2024-03-09 10:15</div>
-                                </div>
-                                <div class="document-actions">
-                                    <button class="btn-icon" title="查看">👁️</button>
-                                    <button class="btn-icon" title="下載">⬇️</button>
-                                    <button class="btn-icon" title="刪除">🗑️</button>
-                                </div>
-                            </div>
-                            <div class="document-item">
-                                <div class="document-icon">📊</div>
-                                <div class="document-info">
-                                    <div class="document-name">供應商發票_INV2024001.pdf</div>
-                                    <div class="document-meta">PDF • 856 KB • 2024-03-08 16:45</div>
-                                </div>
-                                <div class="document-actions">
-                                    <button class="btn-icon" title="查看">👁️</button>
-                                    <button class="btn-icon" title="下載">⬇️</button>
-                                    <button class="btn-icon" title="刪除">🗑️</button>
-                                </div>
-                            </div>
-                            <div class="document-item">
-                                <div class="document-icon">📄</div>
-                                <div class="document-info">
-                                    <div class="document-name">員工報銷單_20240305.pdf</div>
-                                    <div class="document-meta">PDF • 3.1 MB • 2024-03-05 09:20</div>
-                                </div>
-                                <div class="document-actions">
-                                    <button class="btn-icon" title="查看">👁️</button>
-                                    <button class="btn-icon" title="下載">⬇️</button>
-                                    <button class="btn-icon" title="刪除">🗑️</button>
-                                </div>
+                            <!-- Loading state -->
+                            <div class="empty-state">
+                                <div style="font-size: 32px; margin-bottom: 16px;">📂</div>
+                                <p>載入中...</p>
                             </div>
                         </div>
                     </div>
@@ -139,7 +239,7 @@
                         <div class="scan-preview">
                             <div class="scan-preview-icon">📷</div>
                             <div class="scan-preview-text">使用您的相機掃描文件<br>AI 將自動提取關鍵信息</div>
-                            <button class="btn btn-primary" id="scanBtn" style="width: 100%;">
+                            <button class="btn btn-primary" id="scanBtn" style="width: 100%;" onclick="startScan()">
                                 開始掃描
                             </button>
                         </div>
@@ -196,92 +296,385 @@
         </div>
     </div>
 
+    <!-- Load Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="../js/supabase-client.js"></script>
+
     <script>
-        // Check if user is logged in
-        (function() {
-            const isLoggedIn = localStorage.getItem('aicountant-portal-logged-in');
-            console.log('Page - Login check:', isLoggedIn);
-            
-            if (isLoggedIn !== 'true') {
-                console.log('Not logged in, redirecting to login...');
-                window.location.href = 'login.html';
+        // ============================================
+        // AUTHENTICATION CHECK
+        // ============================================
+        
+        let currentUser = null;
+        let isDemoMode = false;
+        
+        // Check authentication on page load
+        (async function init() {
+            try {
+                // Check if Supabase is configured
+                if (SUPABASE_URL.includes('your-project-ref') || SUPABASE_ANON_KEY.includes('your-anon-key')) {
+                    console.log('⚠️ Supabase not configured, using demo mode');
+                    isDemoMode = true;
+                    
+                    // Check localStorage fallback
+                    const localLoggedIn = localStorage.getItem('aicountant-portal-logged-in') === 'true';
+                    if (!localLoggedIn) {
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    
+                    const userEmail = localStorage.getItem('aicountant-portal-user') || 'Demo User';
+                    currentUser = { email: userEmail };
+                    loadDemoDocuments();
+                } else {
+                    // Real Supabase auth check
+                    const user = await getCurrentUser();
+                    if (!user) {
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    
+                    currentUser = user;
+                    loadDocuments();
+                }
+                
+                // Display user info
+                updateUserDisplay();
+                
+            } catch (error) {
+                console.error('Initialization error:', error);
+            }
+        })();
+        
+        // ============================================
+        // DOCUMENTS
+        // ============================================
+        
+        async function loadDocuments() {
+            if (isDemoMode) {
+                loadDemoDocuments();
                 return;
             }
             
-            // Display user name
-            const userEmail = localStorage.getItem('aicountant-portal-user');
-            console.log('Page - User:', userEmail);
-            
-            if (userEmail) {
-                const userNameEl = document.getElementById('userName');
-                if (userNameEl) {
-                    userNameEl.textContent = userEmail.split('@')[0];
+            try {
+                const filterType = document.getElementById('filterType').value;
+                
+                let query = supabaseClient
+                    .from('documents')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (filterType) {
+                    query = query.eq('doc_type', filterType);
                 }
+                
+                const { data: documents, error } = await query;
+                
+                if (error) throw error;
+                
+                renderDocuments(documents || []);
+            } catch (error) {
+                console.error('Error loading documents:', error);
+                renderEmptyDocuments();
             }
-        })();
-
-        // Logout function
-        function logout() {
-            console.log('Logging out...');
-            localStorage.removeItem('aicountant-portal-logged-in');
-            localStorage.removeItem('aicountant-portal-user');
-            window.location.href = 'login.html';
         }
-
-        // File Upload
+        
+        function renderDocuments(documents) {
+            const container = document.getElementById('documentList');
+            
+            if (!documents || documents.length === 0) {
+                renderEmptyDocuments();
+                return;
+            }
+            
+            container.innerHTML = documents.map(doc => `
+                <div class="document-item">
+                    <div class="document-icon">${getFileIcon(doc.file_type)}</div>
+                    <div class="document-info">
+                        <div class="document-name">${escapeHtml(doc.original_name)}</div>
+                        <div class="document-meta">
+                            ${getDocTypeLabel(doc.doc_type)} • ${formatFileSize(doc.file_size)} • ${formatDate(doc.created_at)}
+                            ${doc.processing_status !== 'completed' ? `<span class="processing-badge ${doc.processing_status}">${getProcessingLabel(doc.processing_status)}</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="document-actions">
+                        ${doc.public_url ? `<button class="btn-icon" onclick="viewDocument('${doc.public_url}')" title="查看">👁️</button>` : ''}
+                        <button class="btn-icon" onclick="deleteDocument('${doc.id}')" title="刪除">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function renderEmptyDocuments() {
+            document.getElementById('documentList').innerHTML = `
+                <div class="empty-state">
+                    <div style="font-size: 48px; margin-bottom: 16px;">📂</div>
+                    <p>暫無文件</p>
+                    <p style="font-size: 13px; margin-top: 8px;">拖放文件到上方上傳區域</p>
+                </div>
+            `;
+        }
+        
+        function loadDemoDocuments() {
+            const demoDocs = [
+                { id: '1', original_name: '2024年3月銀行對帳單.pdf', file_type: 'pdf', doc_type: 'bank_statement', file_size: 2516582, created_at: '2024-03-10T14:30:00', processing_status: 'completed', public_url: '#' },
+                { id: '2', original_name: '辦公室租金收據_202403.jpg', file_type: 'image', doc_type: 'receipt', file_size: 1258291, created_at: '2024-03-09T10:15:00', processing_status: 'completed', public_url: '#' },
+                { id: '3', original_name: '供應商發票_INV2024001.pdf', file_type: 'pdf', doc_type: 'invoice', file_size: 876544, created_at: '2024-03-08T16:45:00', processing_status: 'processing', public_url: null }
+            ];
+            renderDocuments(demoDocs);
+        }
+        
+        // ============================================
+        // FILE UPLOAD
+        // ============================================
+        
         const uploadZone = document.getElementById('uploadZone');
         const fileInput = document.getElementById('fileInput');
-
+        
         uploadZone.addEventListener('click', () => fileInput.click());
-
+        
         uploadZone.addEventListener('dragover', (e) => {
             e.preventDefault();
             uploadZone.classList.add('dragover');
         });
-
+        
         uploadZone.addEventListener('dragleave', () => {
             uploadZone.classList.remove('dragover');
         });
-
+        
         uploadZone.addEventListener('drop', (e) => {
             e.preventDefault();
             uploadZone.classList.remove('dragover');
-            const files = e.dataTransfer.files;
-            handleFiles(files);
+            handleFiles(e.dataTransfer.files);
         });
-
+        
         fileInput.addEventListener('change', (e) => {
             handleFiles(e.target.files);
         });
-
-        function handleFiles(files) {
+        
+        async function handleFiles(files) {
             for (let file of files) {
-                console.log('Uploading:', file.name);
-                // In a real app, you would upload the file to a server here
-                alert(`已選擇文件: ${file.name}\n在實際應用中，文件將會被上傳到服務器。`);
+                if (isDemoMode) {
+                    alert(`演示模式：已選擇文件 ${file.name}\n實際應用中將上傳到 Supabase Storage`);
+                    continue;
+                }
+                
+                // Validate file size (10MB)
+                if (file.size > 10 * 1024 * 1024) {
+                    alert(`文件 ${file.name} 超過 10MB 限制`);
+                    continue;
+                }
+                
+                await uploadFile(file);
             }
         }
-
-        // Scan Modal
-        const scanModal = document.getElementById('scanModal');
-        const scanBtn = document.getElementById('scanBtn');
-
-        scanBtn.addEventListener('click', () => {
-            scanModal.style.display = 'flex';
-        });
-
+        
+        async function uploadFile(file) {
+            const progressDiv = document.getElementById('uploadProgress');
+            const fileNameSpan = document.getElementById('uploadFileName');
+            const percentSpan = document.getElementById('uploadPercent');
+            const progressFill = document.getElementById('progressFill');
+            
+            progressDiv.classList.add('active');
+            fileNameSpan.textContent = file.name;
+            
+            try {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                const filePath = `${user.id}/${Date.now()}_${file.name}`;
+                
+                // Upload to Supabase Storage
+                const { data, error } = await supabaseClient
+                    .storage
+                    .from('documents')
+                    .upload(filePath, file, {
+                        cacheControl: '3600',
+                        upsert: false,
+                        onUploadProgress: (progress) => {
+                            const percent = Math.round((progress.loaded / progress.total) * 100);
+                            percentSpan.textContent = `${percent}%`;
+                            progressFill.style.width = `${percent}%`;
+                        }
+                    });
+                
+                if (error) throw error;
+                
+                // Get public URL
+                const { data: { publicUrl } } = supabaseClient
+                    .storage
+                    .from('documents')
+                    .getPublicUrl(filePath);
+                
+                // Save document metadata to database
+                const { error: dbError } = await supabaseClient
+                    .from('documents')
+                    .insert([{
+                        user_id: user.id,
+                        file_name: filePath,
+                        original_name: file.name,
+                        file_type: file.type.includes('pdf') ? 'pdf' : 'image',
+                        file_size: file.size,
+                        mime_type: file.type,
+                        storage_path: filePath,
+                        public_url: publicUrl,
+                        doc_type: 'other',
+                        processing_status: 'pending'
+                    }]);
+                
+                if (dbError) throw dbError;
+                
+                // Reset progress and reload
+                setTimeout(() => {
+                    progressDiv.classList.remove('active');
+                    progressFill.style.width = '0%';
+                    loadDocuments();
+                }, 500);
+                
+            } catch (error) {
+                console.error('Upload error:', error);
+                alert('上傳失敗：' + error.message);
+                progressDiv.classList.remove('active');
+            }
+        }
+        
+        // ============================================
+        // SCAN & VIEW
+        // ============================================
+        
+        function startScan() {
+            if (isDemoMode) {
+                document.getElementById('scanModal').style.display = 'flex';
+            } else {
+                document.getElementById('scanModal').style.display = 'flex';
+            }
+        }
+        
         function closeScanModal() {
-            scanModal.style.display = 'none';
+            document.getElementById('scanModal').style.display = 'none';
         }
-
+        
         function captureScan() {
-            alert('掃描完成！AI 正在處理文件...\n\n在實際應用中，這將會：\n1. 捕捉相機畫面\n2. 使用 AI 識別文字和數據\n3. 自動創建交易記錄\n4. 保存掃描的文件');
-            closeScanModal();
+            if (isDemoMode) {
+                alert('掃描完成！AI 正在處理文件...\n\n演示模式：這是一個模擬功能');
+                closeScanModal();
+            } else {
+                alert('掃描完成！AI 正在處理文件...\n\n實際應用中將使用 OCR 識別文字和數據');
+                closeScanModal();
+            }
         }
-
+        
+        function viewDocument(url) {
+            if (url === '#') {
+                alert('演示模式：無法查看文件');
+                return;
+            }
+            window.open(url, '_blank');
+        }
+        
+        async function deleteDocument(id) {
+            if (!confirm('確定要刪除此文件嗎？')) return;
+            
+            if (isDemoMode) {
+                alert('演示模式：無法刪除文件');
+                return;
+            }
+            
+            try {
+                // Get document info first
+                const { data: doc } = await supabaseClient
+                    .from('documents')
+                    .select('storage_path')
+                    .eq('id', id)
+                    .single();
+                
+                // Delete from storage
+                if (doc?.storage_path) {
+                    await supabaseClient.storage.from('documents').remove([doc.storage_path]);
+                }
+                
+                // Delete from database
+                const { error } = await supabaseClient.from('documents').delete().eq('id', id);
+                if (error) throw error;
+                
+                loadDocuments();
+                alert('已刪除！');
+            } catch (error) {
+                console.error('Delete error:', error);
+                alert('刪除失敗');
+            }
+        }
+        
+        // ============================================
+        // HELPER FUNCTIONS
+        // ============================================
+        
+        function updateUserDisplay() {
+            if (!currentUser) return;
+            const userName = currentUser.email ? currentUser.email.split('@')[0] : '用戶';
+            document.getElementById('userName').textContent = userName;
+        }
+        
+        function handleLogout() {
+            if (isDemoMode) {
+                localStorage.removeItem('aicountant-portal-logged-in');
+                localStorage.removeItem('aicountant-portal-user');
+                window.location.href = 'login.html';
+            } else {
+                signOut();
+            }
+        }
+        
+        function getFileIcon(type) {
+            const icons = {
+                'pdf': '📄',
+                'image': '🖼️'
+            };
+            return icons[type] || '📎';
+        }
+        
+        function getDocTypeLabel(type) {
+            const labels = {
+                'invoice': '發票',
+                'receipt': '收據',
+                'bank_statement': '銀行對帳單',
+                'contract': '合同',
+                'tax_document': '稅務文件',
+                'expense_report': '報銷單',
+                'other': '其他'
+            };
+            return labels[type] || '其他';
+        }
+        
+        function getProcessingLabel(status) {
+            const labels = {
+                'pending': '等待處理',
+                'processing': '處理中',
+                'completed': '已完成',
+                'failed': '失敗'
+            };
+            return labels[status] || status;
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('zh-HK');
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
         // Close modal when clicking outside
-        scanModal.addEventListener('click', (e) => {
-            if (e.target === scanModal) {
+        document.getElementById('scanModal').addEventListener('click', (e) => {
+            if (e.target.id === 'scanModal') {
                 closeScanModal();
             }
         });

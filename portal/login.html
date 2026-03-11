@@ -20,13 +20,25 @@
         .error-message.show {
             display: block;
         }
+        .success-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 16px;
+            display: none;
+        }
+        .success-message.show {
+            display: block;
+        }
         .demo-credentials {
-            background: #e3f2fd;
-            border: 1px solid #bbdefb;
+            background: #fff3e0;
+            border: 1px solid #ffe0b2;
             padding: 12px 16px;
             border-radius: 8px;
             font-size: 13px;
-            color: #1565c0;
+            color: #e65100;
             margin-bottom: 20px;
         }
         .demo-credentials strong {
@@ -40,6 +52,48 @@
         .btn-loading::after {
             content: '...';
         }
+        .auth-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: #f5f5f5;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .auth-tab.active {
+            background: #000;
+            color: #fff;
+        }
+        .auth-form {
+            display: none;
+        }
+        .auth-form.active {
+            display: block;
+        }
+        .forgot-password-section {
+            display: none;
+            text-align: center;
+            padding: 20px 0;
+        }
+        .forgot-password-section.active {
+            display: block;
+        }
+        .back-to-login {
+            color: #666;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+        .back-to-login:hover {
+            color: #000;
+        }
     </style>
 </head>
 <body class="portal-body">
@@ -47,144 +101,385 @@
         <div class="login-card">
             <div class="login-header">
                 <div class="logo">AIcountant</div>
-                <h1>客戶登入</h1>
-                <p>歡迎回到您的財務管理中心</p>
+                <h1 id="pageTitle">客戶登入</h1>
+                <p id="pageSubtitle">歡迎回到您的財務管理中心</p>
             </div>
             
-            <!-- Demo Credentials -->
+            <!-- Demo Notice -->
             <div class="demo-credentials">
-                <strong>📝 演示帳戶（任意輸入即可登入）</strong>
-                電郵：demo@aicountant.com<br>
-                密碼：任意輸入
+                <strong>⚙️ 設置提醒</strong>
+                請先按照 SUPABASE_SETUP.md 配置 Supabase 憑證<br>
+                <small>或繼續使用演示模式</small>
             </div>
             
-            <!-- Error Message -->
+            <!-- Error/Success Messages -->
             <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
             
-            <form class="login-form" id="loginForm">
+            <!-- Auth Tabs -->
+            <div class="auth-tabs" id="authTabs">
+                <button class="auth-tab active" data-tab="login">登入</button>
+                <button class="auth-tab" data-tab="register">註冊</button>
+            </div>
+            
+            <!-- Login Form -->
+            <form class="login-form auth-form active" id="loginForm">
                 <div class="form-group">
-                    <label for="email">電郵地址</label>
-                    <input type="email" id="email" name="email" placeholder="請輸入您的電郵" required autocomplete="email">
+                    <label for="loginEmail">電郵地址</label>
+                    <input type="email" id="loginEmail" name="email" placeholder="請輸入您的電郵" required autocomplete="email">
                 </div>
                 <div class="form-group">
-                    <label for="password">密碼</label>
-                    <input type="password" id="password" name="password" placeholder="請輸入您的密碼" required autocomplete="current-password">
+                    <label for="loginPassword">密碼</label>
+                    <input type="password" id="loginPassword" name="password" placeholder="請輸入您的密碼" required autocomplete="current-password">
                 </div>
                 <div class="form-options">
                     <label class="checkbox-label">
-                        <input type="checkbox" name="remember" id="remember">
+                        <input type="checkbox" id="rememberMe">
                         <span>記住我</span>
                     </label>
-                    <a href="#" class="forgot-password" onclick="alert('請聯繫客服重置密碼')">忘記密碼？</a>
+                    <a href="#" class="forgot-password" id="forgotPasswordLink">忘記密碼？</a>
                 </div>
                 <button type="submit" class="btn btn-primary btn-full" id="loginBtn">登入</button>
             </form>
             
+            <!-- Register Form -->
+            <form class="auth-form" id="registerForm">
+                <div class="form-group">
+                    <label for="registerEmail">電郵地址</label>
+                    <input type="email" id="registerEmail" name="email" placeholder="請輸入您的電郵" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">密碼</label>
+                    <input type="password" id="registerPassword" name="password" placeholder="至少6個字符" required minlength="6" autocomplete="new-password">
+                </div>
+                <div class="form-group">
+                    <label for="registerName">姓名 / 公司名稱</label>
+                    <input type="text" id="registerName" name="full_name" placeholder="您的姓名或公司名稱">
+                </div>
+                <button type="submit" class="btn btn-primary btn-full" id="registerBtn">註冊帳戶</button>
+            </form>
+            
+            <!-- Forgot Password Section -->
+            <div class="forgot-password-section" id="forgotPasswordSection">
+                <p style="color: #666; margin-bottom: 16px;">輸入您的電郵地址，我們將發送重置密碼的連結。</p>
+                <div class="form-group">
+                    <input type="email" id="resetEmail" placeholder="請輸入您的電郵" required>
+                </div>
+                <button type="button" class="btn btn-primary btn-full" id="resetPasswordBtn">發送重置連結</button>
+                <p class="back-to-login" id="backToLogin">← 返回登入</p>
+            </div>
+            
             <div class="login-footer">
-                <p>還沒有帳戶？ <a href="../index.html#contact">聯繫我們開戶</a></p>
+                <p>需要幫助？ <a href="../index.html#contact">聯繫客服</a></p>
                 <a href="../index.html" class="back-link">← 返回主頁</a>
             </div>
         </div>
     </div>
     
+    <!-- Load Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="../js/supabase-client.js"></script>
+    
     <script>
-        // Debug: Log when script loads
-        console.log('Login script loaded');
-        
-        // Check if already logged in
-        if (localStorage.getItem('aicountant-portal-logged-in') === 'true') {
-            console.log('Already logged in, redirecting...');
-            window.location.href = 'dashboard.html';
-        }
+        // ============================================
+        // AUTH FORM HANDLING
+        // ============================================
         
         const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const authTabs = document.querySelectorAll('.auth-tab');
         const errorMessage = document.getElementById('errorMessage');
-        const loginBtn = document.getElementById('loginBtn');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
+        const successMessage = document.getElementById('successMessage');
+        const forgotPasswordSection = document.getElementById('forgotPasswordSection');
+        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+        const backToLogin = document.getElementById('backToLogin');
+        const authTabsContainer = document.getElementById('authTabs');
+        const pageTitle = document.getElementById('pageTitle');
+        const pageSubtitle = document.getElementById('pageSubtitle');
         
-        // Load saved email if "remember me" was checked
-        const savedEmail = localStorage.getItem('aicountant-portal-remember-email');
-        if (savedEmail) {
-            emailInput.value = savedEmail;
-            document.getElementById('remember').checked = true;
-        }
+        // Tab switching
+        authTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                authTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                const tabName = tab.dataset.tab;
+                document.querySelectorAll('.auth-form').forEach(form => {
+                    form.classList.remove('active');
+                });
+                
+                if (tabName === 'login') {
+                    loginForm.classList.add('active');
+                } else {
+                    registerForm.classList.add('active');
+                }
+                
+                hideMessages();
+            });
+        });
         
-        loginForm.addEventListener('submit', function(e) {
+        // Show forgot password
+        forgotPasswordLink.addEventListener('click', (e) => {
             e.preventDefault();
-            console.log('Form submitted');
+            loginForm.classList.remove('active');
+            registerForm.classList.remove('active');
+            authTabsContainer.style.display = 'none';
+            forgotPasswordSection.classList.add('active');
+            pageTitle.textContent = '重置密碼';
+            pageSubtitle.textContent = '我們將發送重置連結到您的電郵';
+            hideMessages();
+        });
+        
+        // Back to login
+        backToLogin.addEventListener('click', () => {
+            forgotPasswordSection.classList.remove('active');
+            authTabsContainer.style.display = 'flex';
+            loginForm.classList.add('active');
+            pageTitle.textContent = '客戶登入';
+            pageSubtitle.textContent = '歡迎回到您的財務管理中心';
+            hideMessages();
+        });
+        
+        // ============================================
+        // LOGIN HANDLER
+        // ============================================
+        
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            hideMessages();
             
-            // Get values
-            const email = emailInput.value.trim();
-            const password = passwordInput.value.trim();
-            const remember = document.getElementById('remember').checked;
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            const loginBtn = document.getElementById('loginBtn');
             
-            // Validation
-            if (!email) {
-                showError('請輸入電郵地址');
-                emailInput.focus();
-                return;
-            }
-            
-            if (!password) {
-                showError('請輸入密碼');
-                passwordInput.focus();
-                return;
-            }
-            
-            // Basic email format validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                showError('請輸入有效的電郵地址');
-                emailInput.focus();
-                return;
-            }
-            
-            // Show loading state
+            // Show loading
             loginBtn.classList.add('btn-loading');
             loginBtn.textContent = '登入中';
-            hideError();
+            loginBtn.disabled = true;
             
-            // Simulate API call delay
-            setTimeout(function() {
-                console.log('Login successful for:', email);
+            try {
+                // Check if Supabase is properly configured
+                if (SUPABASE_URL.includes('your-project-ref') || SUPABASE_ANON_KEY.includes('your-anon-key')) {
+                    console.log('⚠️ Supabase not configured, falling back to demo mode');
+                    // Demo mode fallback
+                    setTimeout(() => {
+                        localStorage.setItem('aicountant-portal-logged-in', 'true');
+                        localStorage.setItem('aicountant-portal-user', email);
+                        if (rememberMe) {
+                            localStorage.setItem('aicountant-portal-remember-email', email);
+                        }
+                        window.location.href = 'dashboard.html';
+                    }, 800);
+                    return;
+                }
                 
-                // Store login state
-                localStorage.setItem('aicountant-portal-logged-in', 'true');
-                localStorage.setItem('aicountant-portal-user', email);
+                // Real Supabase authentication
+                const { data, error } = await signIn(email, password);
                 
-                // Handle remember me
-                if (remember) {
+                if (error) {
+                    throw error;
+                }
+                
+                // Save email if remember me
+                if (rememberMe) {
                     localStorage.setItem('aicountant-portal-remember-email', email);
                 } else {
                     localStorage.removeItem('aicountant-portal-remember-email');
                 }
                 
+                showSuccess('登入成功！正在跳轉...');
+                
                 // Redirect to dashboard
-                console.log('Redirecting to dashboard...');
-                window.location.href = 'dashboard.html';
-            }, 800);
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 500);
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                showError(getErrorMessage(error));
+            } finally {
+                loginBtn.classList.remove('btn-loading');
+                loginBtn.textContent = '登入';
+                loginBtn.disabled = false;
+            }
         });
+        
+        // ============================================
+        // REGISTER HANDLER
+        // ============================================
+        
+        registerForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            hideMessages();
+            
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const fullName = document.getElementById('registerName').value.trim();
+            const registerBtn = document.getElementById('registerBtn');
+            
+            // Validation
+            if (password.length < 6) {
+                showError('密碼至少需要6個字符');
+                return;
+            }
+            
+            // Show loading
+            registerBtn.classList.add('btn-loading');
+            registerBtn.textContent = '註冊中';
+            registerBtn.disabled = true;
+            
+            try {
+                // Check if Supabase is properly configured
+                if (SUPABASE_URL.includes('your-project-ref') || SUPABASE_ANON_KEY.includes('your-anon-key')) {
+                    console.log('⚠️ Supabase not configured, falling back to demo mode');
+                    showError('請先配置 Supabase 憑證。詳見 SUPABASE_SETUP.md');
+                    return;
+                }
+                
+                // Real Supabase registration
+                const { data, error } = await signUp(email, password, { full_name: fullName });
+                
+                if (error) {
+                    throw error;
+                }
+                
+                showSuccess('註冊成功！請檢查您的電郵以確認帳戶，然後登入。');
+                
+                // Switch to login tab after 2 seconds
+                setTimeout(() => {
+                    authTabs[0].click();
+                    document.getElementById('loginEmail').value = email;
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Registration error:', error);
+                showError(getErrorMessage(error));
+            } finally {
+                registerBtn.classList.remove('btn-loading');
+                registerBtn.textContent = '註冊帳戶';
+                registerBtn.disabled = false;
+            }
+        });
+        
+        // ============================================
+        // FORGOT PASSWORD HANDLER
+        // ============================================
+        
+        document.getElementById('resetPasswordBtn').addEventListener('click', async function() {
+            hideMessages();
+            
+            const email = document.getElementById('resetEmail').value.trim();
+            const btn = document.getElementById('resetPasswordBtn');
+            
+            if (!email) {
+                showError('請輸入電郵地址');
+                return;
+            }
+            
+            // Show loading
+            btn.classList.add('btn-loading');
+            btn.textContent = '發送中';
+            btn.disabled = true;
+            
+            try {
+                // Check if Supabase is properly configured
+                if (SUPABASE_URL.includes('your-project-ref') || SUPABASE_ANON_KEY.includes('your-anon-key')) {
+                    showError('請先配置 Supabase 憑證。詳見 SUPABASE_SETUP.md');
+                    return;
+                }
+                
+                const { error } = await resetPassword(email);
+                
+                if (error) {
+                    throw error;
+                }
+                
+                showSuccess('重置密碼連結已發送到您的電郵！');
+                
+            } catch (error) {
+                console.error('Password reset error:', error);
+                showError(getErrorMessage(error));
+            } finally {
+                btn.classList.remove('btn-loading');
+                btn.textContent = '發送重置連結';
+                btn.disabled = false;
+            }
+        });
+        
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
         
         function showError(message) {
             errorMessage.textContent = message;
             errorMessage.classList.add('show');
+            successMessage.classList.remove('show');
         }
         
-        function hideError() {
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successMessage.classList.add('show');
             errorMessage.classList.remove('show');
         }
         
-        // Clear error when user starts typing
-        emailInput.addEventListener('input', hideError);
-        passwordInput.addEventListener('input', hideError);
+        function hideMessages() {
+            errorMessage.classList.remove('show');
+            successMessage.classList.remove('show');
+        }
         
-        // Debug: Log localStorage state
-        console.log('localStorage state:', {
-            loggedIn: localStorage.getItem('aicountant-portal-logged-in'),
-            user: localStorage.getItem('aicountant-portal-user'),
-            rememberEmail: localStorage.getItem('aicountant-portal-remember-email')
-        });
+        function getErrorMessage(error) {
+            // Map Supabase error codes to user-friendly messages
+            const errorMessages = {
+                'Invalid login credentials': '電郵或密碼不正確',
+                'Email not confirmed': '請先確認您的電郵地址',
+                'User already registered': '此電郵已被註冊',
+                'Password should be at least 6 characters': '密碼至少需要6個字符',
+                'Unable to validate email address: invalid format': '電郵格式不正確',
+                'Rate limit exceeded': '請求過於頻繁，請稍後再試',
+                'AuthApiError': '登入失敗，請檢查您的憑證',
+                'Network error': '網絡連接失敗，請檢查您的網絡'
+            };
+            
+            // Try to match error message or code
+            const message = error?.message || error?.code || '發生錯誤，請稍後再試';
+            return errorMessages[message] || message;
+        }
+        
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        
+        // Check if already logged in
+        (async function() {
+            const loggedIn = await isLoggedIn();
+            if (loggedIn) {
+                console.log('✅ Already logged in, redirecting...');
+                window.location.href = 'dashboard.html';
+                return;
+            }
+            
+            // Load saved email if "remember me" was checked
+            const savedEmail = localStorage.getItem('aicountant-portal-remember-email');
+            if (savedEmail) {
+                document.getElementById('loginEmail').value = savedEmail;
+                document.getElementById('rememberMe').checked = true;
+            }
+            
+            console.log('🔓 Login page ready');
+            
+            // Warn if Supabase not configured
+            if (SUPABASE_URL.includes('your-project-ref') || SUPABASE_ANON_KEY.includes('your-anon-key')) {
+                console.warn('⚠️ Supabase credentials not configured. See SUPABASE_SETUP.md');
+            }
+        })();
+        
+        // Clear error when user starts typing
+        document.getElementById('loginEmail').addEventListener('input', hideMessages);
+        document.getElementById('loginPassword').addEventListener('input', hideMessages);
+        document.getElementById('registerEmail').addEventListener('input', hideMessages);
+        document.getElementById('registerPassword').addEventListener('input', hideMessages);
+        document.getElementById('resetEmail').addEventListener('input', hideMessages);
     </script>
 </body>
 </html>

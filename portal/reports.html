@@ -6,6 +6,49 @@
     <title>財務報告 - AIcountant Portal</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="portal.css">
+    <style>
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .report-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .report-card:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+        .report-icon {
+            font-size: 40px;
+            margin-bottom: 16px;
+        }
+        .report-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .report-description {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 16px;
+        }
+        .report-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .report-history {
+            margin-top: 32px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: #666;
+        }
+    </style>
 </head>
 <body class="portal-body">
     <div class="portal-layout">
@@ -27,58 +70,273 @@
                 <div class="user-info">
                     <div class="user-avatar">👤</div>
                     <div class="user-details">
-                        <span class="user-name" id="userName">客戶名稱</span>
+                        <span class="user-name" id="userName">載入中...</span>
                         <span class="user-role">企業帳戶</span>
                     </div>
-                    <button class="logout-btn" onclick="logout()" title="登出">🚪</button>
+                    <button class="logout-btn" onclick="handleLogout()" title="登出">🚪</button>
                 </div>
             </div>
         </aside>
+
         <main class="main-content">
             <header class="page-header">
                 <h1>財務報告</h1>
                 <p>生成和下載您的財務報告</p>
             </header>
+
+            <!-- Report Types -->
             <div class="content-card">
                 <div class="card-header">
-                    <h3>可用報告</h3>
+                    <h3>生成新報告</h3>
                 </div>
                 <div class="card-body">
-                    <p style="color: #666; text-align: center; padding: 48px 0;">財務報告功能開發中...</p>
+                    <div class="reports-grid">
+                        <div class="report-card" onclick="generateReport('profit_loss')">
+                            <div class="report-icon">📊</div>
+                            <div class="report-title">損益表</div>
+                            <div class="report-description">查看特定期間內的收入、支出和淨利潤</div>
+                            <div class="report-actions">
+                                <button class="btn btn-secondary" style="flex: 1;">生成</button>
+                            </div>
+                        </div>
+                        
+                        <div class="report-card" onclick="generateReport('balance_sheet')">
+                            <div class="report-icon">⚖️</div>
+                            <div class="report-title">資產負債表</div>
+                            <div class="report-description">查看企業的資產、負債和權益狀況</div>
+                            <div class="report-actions">
+                                <button class="btn btn-secondary" style="flex: 1;">生成</button>
+                            </div>
+                        </div>
+                        
+                        <div class="report-card" onclick="generateReport('cash_flow')">
+                            <div class="report-icon">💸</div>
+                            <div class="report-title">現金流量表</div>
+                            <div class="report-description">追踪現金的流入和流出情況</div>
+                            <div class="report-actions">
+                                <button class="btn btn-secondary" style="flex: 1;">生成</button>
+                            </div>
+                        </div>
+                        
+                        <div class="report-card" onclick="generateReport('tax_summary')">
+                            <div class="report-icon">📝</div>
+                            <div class="report-title">稅務摘要</div>
+                            <div class="report-description">生成稅務申報所需的財務摘要</div>
+                            <div class="report-actions">
+                                <button class="btn btn-secondary" style="flex: 1;">生成</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Report History -->
+            <div class="content-card report-history">
+                <div class="card-header">
+                    <h3>報告歷史</h3>
+                </div>
+                <div class="card-body">
+                    <table class="transaction-table" id="reportsTable">
+                        <thead>
+                            <tr>
+                                <th>報告名稱</th>
+                                <th>類型</th>
+                                <th>期間</th>
+                                <th>生成日期</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportsBody">
+                            <tr>
+                                <td colspan="5" class="empty-state">載入中...</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </main>
     </div>
+
+    <!-- Load Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="../js/supabase-client.js"></script>
+
     <script>
-        // Check if user is logged in
-        (function() {
-            const isLoggedIn = localStorage.getItem('aicountant-portal-logged-in');
-            console.log('Page - Login check:', isLoggedIn);
+        // ============================================
+        // AUTHENTICATION CHECK
+        // ============================================
+        
+        let currentUser = null;
+        let isDemoMode = false;
+        
+        // Check authentication on page load
+        (async function init() {
+            try {
+                // Check if Supabase is configured
+                if (SUPABASE_URL.includes('your-project-ref') || SUPABASE_ANON_KEY.includes('your-anon-key')) {
+                    console.log('⚠️ Supabase not configured, using demo mode');
+                    isDemoMode = true;
+                    
+                    // Check localStorage fallback
+                    const localLoggedIn = localStorage.getItem('aicountant-portal-logged-in') === 'true';
+                    if (!localLoggedIn) {
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    
+                    const userEmail = localStorage.getItem('aicountant-portal-user') || 'Demo User';
+                    currentUser = { email: userEmail };
+                    loadDemoReports();
+                } else {
+                    // Real Supabase auth check
+                    const user = await getCurrentUser();
+                    if (!user) {
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    
+                    currentUser = user;
+                    loadReports();
+                }
+                
+                // Display user info
+                updateUserDisplay();
+                
+            } catch (error) {
+                console.error('Initialization error:', error);
+            }
+        })();
+        
+        // ============================================
+        // LOAD REPORTS
+        // ============================================
+        
+        async function loadReports() {
+            try {
+                const { data: reports, error } = await supabaseClient
+                    .from('reports')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                renderReports(reports || []);
+            } catch (error) {
+                console.error('Error loading reports:', error);
+                renderEmptyReports();
+            }
+        }
+        
+        function renderReports(reports) {
+            const tbody = document.getElementById('reportsBody');
             
-            if (isLoggedIn !== 'true') {
-                console.log('Not logged in, redirecting to login...');
-                window.location.href = 'login.html';
+            if (!reports || reports.length === 0) {
+                renderEmptyReports();
                 return;
             }
             
-            // Display user name
-            const userEmail = localStorage.getItem('aicountant-portal-user');
-            console.log('Page - User:', userEmail);
+            tbody.innerHTML = reports.map(report => `
+                <tr>
+                    <td>${escapeHtml(report.report_name)}</td>
+                    <td>${getReportTypeLabel(report.report_type)}</td>
+                    <td>${formatDate(report.start_date)} - ${formatDate(report.end_date)}</td>
+                    <td>${formatDate(report.created_at)}</td>
+                    <td>
+                        <button class="btn-icon" onclick="viewReport('${report.id}')" title="查看">👁️</button>
+                        <button class="btn-icon" onclick="downloadReport('${report.id}')" title="下載">⬇️</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function renderEmptyReports() {
+            document.getElementById('reportsBody').innerHTML = `
+                <tr>
+                    <td colspan="5" class="empty-state">
+                        <div style="font-size: 32px; margin-bottom: 16px;">📈</div>
+                        <p>暫無報告</p>
+                        <p style="font-size: 13px; margin-top: 8px;">點擊上方生成新報告</p>
+                    </td>
+                </tr>
+            `;
+        }
+        
+        function loadDemoReports() {
+            const demoReports = [
+                { id: '1', report_name: '2024年3月損益表', report_type: 'profit_loss', start_date: '2024-03-01', end_date: '2024-03-31', created_at: '2024-03-20' },
+                { id: '2', report_name: '2024年第一季度稅務摘要', report_type: 'tax_summary', start_date: '2024-01-01', end_date: '2024-03-31', created_at: '2024-03-15' }
+            ];
+            renderReports(demoReports);
+        }
+        
+        // ============================================
+        // GENERATE & VIEW REPORTS
+        // ============================================
+        
+        function generateReport(type) {
+            const typeLabels = {
+                'profit_loss': '損益表',
+                'balance_sheet': '資產負債表',
+                'cash_flow': '現金流量表',
+                'tax_summary': '稅務摘要'
+            };
             
-            if (userEmail) {
-                const userNameEl = document.getElementById('userName');
-                if (userNameEl) {
-                    userNameEl.textContent = userEmail.split('@')[0];
-                }
+            if (isDemoMode) {
+                alert(`演示模式：將生成 ${typeLabels[type]}\n\n實際應用中需要配置 Supabase`);
+            } else {
+                alert(`生成 ${typeLabels[type]} 功能開發中...`);
             }
-        })();
-
-        // Logout function
-        function logout() {
-            console.log('Logging out...');
-            localStorage.removeItem('aicountant-portal-logged-in');
-            localStorage.removeItem('aicountant-portal-user');
-            window.location.href = 'login.html';
+        }
+        
+        function viewReport(id) {
+            alert('查看報告：' + id);
+        }
+        
+        function downloadReport(id) {
+            alert('下載報告：' + id);
+        }
+        
+        // ============================================
+        // HELPER FUNCTIONS
+        // ============================================
+        
+        function updateUserDisplay() {
+            if (!currentUser) return;
+            const userName = currentUser.email ? currentUser.email.split('@')[0] : '用戶';
+            document.getElementById('userName').textContent = userName;
+        }
+        
+        function handleLogout() {
+            if (isDemoMode) {
+                localStorage.removeItem('aicountant-portal-logged-in');
+                localStorage.removeItem('aicountant-portal-user');
+                window.location.href = 'login.html';
+            } else {
+                signOut();
+            }
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('zh-HK');
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function getReportTypeLabel(type) {
+            const labels = {
+                'profit_loss': '損益表',
+                'balance_sheet': '資產負債表',
+                'cash_flow': '現金流量表',
+                'tax_summary': '稅務摘要',
+                'custom': '自定義報告'
+            };
+            return labels[type] || type;
         }
     </script>
 </body>

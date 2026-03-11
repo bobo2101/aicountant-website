@@ -6,6 +6,129 @@
     <title>設置 - AIcountant Portal</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="portal.css">
+    <style>
+        .settings-section {
+            margin-bottom: 32px;
+        }
+        .settings-section h3 {
+            font-size: 16px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: #333;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #000;
+        }
+        .btn-save {
+            background: #000;
+            color: #fff;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn-save:hover {
+            opacity: 0.9;
+        }
+        .btn-save:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .success-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            display: none;
+        }
+        .success-message.show {
+            display: block;
+        }
+        .danger-zone {
+            border: 1px solid #ffcdd2;
+            border-radius: 8px;
+            padding: 20px;
+            background: #ffebee;
+        }
+        .danger-zone h4 {
+            color: #c62828;
+            margin-bottom: 8px;
+        }
+        .danger-zone p {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+        .btn-danger {
+            background: #c62828;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .user-info-display {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+        .user-avatar-large {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: #000;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .user-info-text h4 {
+            margin-bottom: 4px;
+        }
+        .user-info-text p {
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body class="portal-body">
     <div class="portal-layout">
@@ -27,58 +150,309 @@
                 <div class="user-info">
                     <div class="user-avatar">👤</div>
                     <div class="user-details">
-                        <span class="user-name" id="userName">客戶名稱</span>
+                        <span class="user-name" id="userName">載入中...</span>
                         <span class="user-role">企業帳戶</span>
                     </div>
-                    <button class="logout-btn" onclick="logout()" title="登出">🚪</button>
+                    <button class="logout-btn" onclick="handleLogout()" title="登出">🚪</button>
                 </div>
             </div>
         </aside>
+
         <main class="main-content">
             <header class="page-header">
                 <h1>設置</h1>
                 <p>管理您的帳戶設置</p>
             </header>
+
+            <!-- User Info Display -->
+            <div class="user-info-display" id="userInfoDisplay">
+                <div class="user-avatar-large">👤</div>
+                <div class="user-info-text">
+                    <h4 id="displayName">載入中...</h4>
+                    <p id="displayEmail">載入中...</p>
+                </div>
+            </div>
+
+            <!-- Settings Form -->
             <div class="content-card">
                 <div class="card-header">
-                    <h3>帳戶信息</h3>
+                    <h3>個人資料</h3>
                 </div>
                 <div class="card-body">
-                    <p style="color: #666; text-align: center; padding: 48px 0;">設置功能開發中...</p>
+                    <div class="success-message" id="successMessage">
+                        設置已保存！
+                    </div>
+                    
+                    <form id="profileForm">
+                        <div class="settings-section">
+                            <h3>基本信息</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="fullName">姓名</label>
+                                    <input type="text" id="fullName" placeholder="您的姓名">
+                                </div>
+                                <div class="form-group">
+                                    <label for="companyName">公司名稱</label>
+                                    <input type="text" id="companyName" placeholder="公司名稱">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="phone">電話</label>
+                                    <input type="tel" id="phone" placeholder="+852 1234 5678">
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">電郵地址</label>
+                                    <input type="email" id="email" disabled style="background: #f5f5f5;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <h3>更改密碼</h3>
+                            <div class="form-group">
+                                <label for="currentPassword">當前密碼</label>
+                                <input type="password" id="currentPassword" placeholder="輸入當前密碼">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="newPassword">新密碼</label>
+                                    <input type="password" id="newPassword" placeholder="至少6個字符">
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirmPassword">確認新密碼</label>
+                                    <input type="password" id="confirmPassword" placeholder="再次輸入新密碼">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-save" id="saveBtn">保存更改</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="content-card" style="margin-top: 24px;">
+                <div class="card-body">
+                    <div class="danger-zone">
+                        <h4>⚠️ 危險區域</h4>
+                        <p>刪除帳戶將永久刪除您的所有數據，此操作無法撤銷。</p>
+                        <button class="btn-danger" onclick="deleteAccount()">刪除帳戶</button>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
+
+    <!-- Load Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="../js/supabase-client.js"></script>
+
     <script>
-        // Check if user is logged in
-        (function() {
-            const isLoggedIn = localStorage.getItem('aicountant-portal-logged-in');
-            console.log('Page - Login check:', isLoggedIn);
+        // ============================================
+        // AUTHENTICATION CHECK
+        // ============================================
+        
+        let currentUser = null;
+        let isDemoMode = false;
+        
+        // Check authentication on page load
+        (async function init() {
+            try {
+                // Check if Supabase is configured
+                if (SUPABASE_URL.includes('your-project-ref') || SUPABASE_ANON_KEY.includes('your-anon-key')) {
+                    console.log('⚠️ Supabase not configured, using demo mode');
+                    isDemoMode = true;
+                    
+                    // Check localStorage fallback
+                    const localLoggedIn = localStorage.getItem('aicountant-portal-logged-in') === 'true';
+                    if (!localLoggedIn) {
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    
+                    const userEmail = localStorage.getItem('aicountant-portal-user') || 'Demo User';
+                    currentUser = { email: userEmail };
+                    loadDemoProfile();
+                } else {
+                    // Real Supabase auth check
+                    const user = await getCurrentUser();
+                    if (!user) {
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    
+                    currentUser = user;
+                    loadProfile();
+                }
+                
+            } catch (error) {
+                console.error('Initialization error:', error);
+            }
+        })();
+        
+        // ============================================
+        // LOAD PROFILE
+        // ============================================
+        
+        async function loadProfile() {
+            try {
+                // Display basic user info
+                document.getElementById('displayName').textContent = currentUser.email.split('@')[0];
+                document.getElementById('displayEmail').textContent = currentUser.email;
+                document.getElementById('userName').textContent = currentUser.email.split('@')[0];
+                document.getElementById('email').value = currentUser.email;
+                
+                // Get extended profile
+                const { data: profile, error } = await getProfile();
+                
+                if (profile) {
+                    document.getElementById('fullName').value = profile.full_name || '';
+                    document.getElementById('companyName').value = profile.company_name || '';
+                    document.getElementById('phone').value = profile.phone || '';
+                    
+                    if (profile.full_name) {
+                        document.getElementById('displayName').textContent = profile.full_name;
+                        document.getElementById('userName').textContent = profile.full_name;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+        
+        function loadDemoProfile() {
+            const userName = currentUser.email.split('@')[0];
+            document.getElementById('displayName').textContent = userName;
+            document.getElementById('displayEmail').textContent = currentUser.email;
+            document.getElementById('userName').textContent = userName;
+            document.getElementById('email').value = currentUser.email;
+            document.getElementById('fullName').value = userName;
+        }
+        
+        // ============================================
+        // SAVE PROFILE
+        // ============================================
+        
+        document.getElementById('profileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
             
-            if (isLoggedIn !== 'true') {
-                console.log('Not logged in, redirecting to login...');
-                window.location.href = 'login.html';
+            const saveBtn = document.getElementById('saveBtn');
+            saveBtn.disabled = true;
+            saveBtn.textContent = '保存中...';
+            
+            try {
+                if (isDemoMode) {
+                    // Demo mode - just show success
+                    setTimeout(() => {
+                        showSuccess();
+                        saveBtn.disabled = false;
+                        saveBtn.textContent = '保存更改';
+                    }, 500);
+                    return;
+                }
+                
+                // Update profile
+                const updates = {
+                    full_name: document.getElementById('fullName').value,
+                    company_name: document.getElementById('companyName').value,
+                    phone: document.getElementById('phone').value
+                };
+                
+                const { error } = await updateProfile(updates);
+                if (error) throw error;
+                
+                // Update password if provided
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                if (newPassword) {
+                    if (newPassword !== confirmPassword) {
+                        alert('新密碼與確認密碼不匹配');
+                        return;
+                    }
+                    
+                    if (newPassword.length < 6) {
+                        alert('密碼至少需要6個字符');
+                        return;
+                    }
+                    
+                    const { error: pwdError } = await updatePassword(newPassword);
+                    if (pwdError) throw pwdError;
+                }
+                
+                showSuccess();
+                
+                // Update display name
+                if (updates.full_name) {
+                    document.getElementById('displayName').textContent = updates.full_name;
+                    document.getElementById('userName').textContent = updates.full_name;
+                }
+                
+                // Clear password fields
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+                
+            } catch (error) {
+                console.error('Error saving profile:', error);
+                alert('保存失敗：' + error.message);
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = '保存更改';
+            }
+        });
+        
+        function showSuccess() {
+            const msg = document.getElementById('successMessage');
+            msg.classList.add('show');
+            setTimeout(() => {
+                msg.classList.remove('show');
+            }, 3000);
+        }
+        
+        // ============================================
+        // DELETE ACCOUNT
+        // ============================================
+        
+        async function deleteAccount() {
+            if (!confirm('⚠️ 警告：此操作將永久刪除您的帳戶和所有數據！\n\n確定要繼續嗎？')) {
                 return;
             }
             
-            // Display user name
-            const userEmail = localStorage.getItem('aicountant-portal-user');
-            console.log('Page - User:', userEmail);
-            
-            if (userEmail) {
-                const userNameEl = document.getElementById('userName');
-                if (userNameEl) {
-                    userNameEl.textContent = userEmail.split('@')[0];
-                }
+            const confirmText = prompt('請輸入 "DELETE" 以確認刪除帳戶：');
+            if (confirmText !== 'DELETE') {
+                alert('刪除已取消');
+                return;
             }
-        })();
-
-        // Logout function
-        function logout() {
-            console.log('Logging out...');
-            localStorage.removeItem('aicountant-portal-logged-in');
-            localStorage.removeItem('aicountant-portal-user');
-            window.location.href = 'login.html';
+            
+            if (isDemoMode) {
+                alert('演示模式：無法刪除帳戶');
+                return;
+            }
+            
+            try {
+                // Note: Account deletion requires admin privileges or special handling
+                // This is a placeholder - actual implementation would require backend support
+                alert('請聯繫客服刪除您的帳戶。');
+            } catch (error) {
+                console.error('Error deleting account:', error);
+                alert('刪除失敗：' + error.message);
+            }
+        }
+        
+        // ============================================
+        // HELPER FUNCTIONS
+        // ============================================
+        
+        function handleLogout() {
+            if (isDemoMode) {
+                localStorage.removeItem('aicountant-portal-logged-in');
+                localStorage.removeItem('aicountant-portal-user');
+                window.location.href = 'login.html';
+            } else {
+                signOut();
+            }
         }
     </script>
 </body>
