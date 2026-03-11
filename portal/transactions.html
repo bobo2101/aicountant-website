@@ -51,14 +51,32 @@
         </main>
     </div>
     <script>
-        if (!localStorage.getItem('aicountant-portal-logged-in')) {
-            window.location.href = 'login.html';
-        }
-        const userEmail = localStorage.getItem('aicountant-portal-user');
-        if (userEmail) {
-            document.getElementById('userName').textContent = userEmail.split('@')[0];
-        }
+        // Check if user is logged in
+        (function() {
+            const isLoggedIn = localStorage.getItem('aicountant-portal-logged-in');
+            console.log('Page - Login check:', isLoggedIn);
+            
+            if (isLoggedIn !== 'true') {
+                console.log('Not logged in, redirecting to login...');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Display user name
+            const userEmail = localStorage.getItem('aicountant-portal-user');
+            console.log('Page - User:', userEmail);
+            
+            if (userEmail) {
+                const userNameEl = document.getElementById('userName');
+                if (userNameEl) {
+                    userNameEl.textContent = userEmail.split('@')[0];
+                }
+            }
+        })();
+
+        // Logout function
         function logout() {
+            console.log('Logging out...');
             localStorage.removeItem('aicountant-portal-logged-in');
             localStorage.removeItem('aicountant-portal-user');
             window.location.href = 'login.html';
