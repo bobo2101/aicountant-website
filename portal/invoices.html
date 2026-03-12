@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +7,19 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="portal.css">
     <style>
+        /* Invoice Styles */
+        .invoice-filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .invoice-filters select {
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            background: white;
+        }
         .invoice-table {
             width: 100%;
             border-collapse: collapse;
@@ -29,26 +42,238 @@
             font-size: 12px;
             font-weight: 500;
         }
-        .status-draft {
-            background: #f5f5f5;
+        .status-draft { background: #f5f5f5; color: #666; }
+        .status-sent { background: #e3f2fd; color: #1565c0; }
+        .status-paid { background: #e8f5e9; color: #2e7d32; }
+        .status-overdue { background: #ffebee; color: #c62828; }
+        .status-cancelled { background: #fafafa; color: #999; }
+        
+        .amount-cell {
+            font-weight: 500;
+            text-align: right;
+        }
+        .actions-cell {
+            display: flex;
+            gap: 8px;
+        }
+        .btn-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .btn-icon:hover {
+            background: #f0f0f0;
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header h2 {
+            margin: 0;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
             color: #666;
         }
-        .status-sent {
-            background: #e3f2fd;
-            color: #1565c0;
+        .modal-body {
+            padding: 24px;
         }
-        .status-paid {
-            background: #e8f5e9;
-            color: #2e7d32;
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
         }
-        .status-overdue {
-            background: #ffebee;
-            color: #c62828;
+        
+        /* Invoice Form */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
         }
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #000;
+        }
+        
+        /* Line Items */
+        .line-items-section {
+            margin: 24px 0;
+        }
+        .line-item {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr auto;
+            gap: 12px;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        @media (max-width: 700px) {
+            .line-item {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+        }
+        .line-item input {
+            padding: 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+        }
+        .line-item-total {
+            font-weight: 500;
+            text-align: right;
+        }
+        
+        /* Totals Section */
+        .totals-section {
+            border-top: 2px solid #f0f0f0;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+        }
+        .total-row.grand-total {
+            font-size: 18px;
+            font-weight: 600;
+            border-top: 2px solid #000;
+            margin-top: 8px;
+            padding-top: 12px;
+        }
+        
+        /* Invoice Preview */
+        .preview-invoice {
+            background: white;
+            border: 1px solid #e0e0e0;
+            padding: 40px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+        .preview-company h3 {
+            margin: 0 0 8px 0;
+        }
+        .preview-invoice-info {
+            text-align: right;
+        }
+        .preview-invoice-info h2 {
+            margin: 0 0 16px 0;
+            color: #666;
+        }
+        .preview-client {
+            margin-bottom: 30px;
+        }
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .preview-table th,
+        .preview-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .preview-table th {
+            background: #f8f9fa;
+        }
+        .preview-totals {
+            margin-top: 30px;
+            text-align: right;
+        }
+        
         .empty-state {
             text-align: center;
-            padding: 48px 24px;
+            padding: 48px;
             color: #666;
+        }
+        
+        .btn-add-item {
+            width: 100%;
+            padding: 12px;
+            border: 2px dashed #e0e0e0;
+            background: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.2s;
+        }
+        .btn-add-item:hover {
+            border-color: #000;
+            color: #000;
         }
     </style>
 </head>
@@ -86,18 +311,66 @@
                 <p>創建和管理您的發票</p>
             </header>
 
+            <!-- Summary Cards -->
+            <div class="dashboard-grid" style="margin-bottom: 24px;">
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-card-title">待收款</span>
+                        <div class="stat-card-icon">💰</div>
+                    </div>
+                    <div class="stat-card-value" id="pendingAmount">HK$ 0</div>
+                    <div class="stat-card-change" id="pendingCount">0 張發票</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-card-title">本月已收款</span>
+                        <div class="stat-card-icon">✅</div>
+                    </div>
+                    <div class="stat-card-value" id="paidAmount">HK$ 0</div>
+                    <div class="stat-card-change">已付款發票</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-card-title">逾期發票</span>
+                        <div class="stat-card-icon">⚠️</div>
+                    </div>
+                    <div class="stat-card-value" id="overdueAmount">HK$ 0</div>
+                    <div class="stat-card-change negative" id="overdueCount">0 張逾期</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="invoice-filters">
+                <select id="statusFilter" onchange="loadInvoices()">
+                    <option value="">全部狀態</option>
+                    <option value="draft">草稿</option>
+                    <option value="sent">已發送</option>
+                    <option value="paid">已付款</option>
+                    <option value="overdue">逾期</option>
+                </select>
+                <select id="dateFilter" onchange="loadInvoices()">
+                    <option value="">全部時間</option>
+                    <option value="this_month">本月</option>
+                    <option value="last_month">上月</option>
+                    <option value="this_quarter">本季度</option>
+                </select>
+            </div>
+
+            <!-- Invoices Table -->
             <div class="content-card">
                 <div class="card-header">
                     <h3>發票列表</h3>
-                    <button class="btn btn-primary" style="padding: 8px 16px; font-size: 13px;" onclick="showCreateModal()">+ 創建發票</button>
+                    <button class="btn btn-primary" style="padding: 8px 16px; font-size: 13px;" onclick="showCreateModal()">
+                        + 創建發票
+                    </button>
                 </div>
                 <div class="card-body">
-                    <table class="invoice-table" id="invoicesTable">
+                    <table class="invoice-table">
                         <thead>
                             <tr>
                                 <th>發票編號</th>
                                 <th>客戶</th>
-                                <th>日期</th>
+                                <th>發票日期</th>
                                 <th>到期日</th>
                                 <th>金額</th>
                                 <th>狀態</th>
@@ -115,6 +388,118 @@
         </main>
     </div>
 
+    <!-- Create Invoice Modal -->
+    <div class="modal-overlay" id="createModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>創建發票</h2>
+                <button class="modal-close" onclick="closeCreateModal()">×</button>
+            </div>
+            <form id="invoiceForm">
+                <div class="modal-body">
+                    <!-- Invoice Info -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>發票編號</label>
+                            <input type="text" id="invoiceNumber" placeholder="INV-2024-001" required>
+                        </div>
+                        <div class="form-group">
+                            <label>狀態</label>
+                            <select id="invoiceStatus">
+                                <option value="draft">草稿</option>
+                                <option value="sent">已發送</option>
+                                <option value="paid">已付款</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Dates -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>發票日期</label>
+                            <input type="date" id="issueDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>到期日</label>
+                            <input type="date" id="dueDate" required>
+                        </div>
+                    </div>
+
+                    <!-- Client Info -->
+                    <h3 style="margin: 24px 0 16px; font-size: 16px;">客戶信息</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>客戶名稱</label>
+                            <input type="text" id="clientName" placeholder="客戶公司名稱" required>
+                        </div>
+                        <div class="form-group">
+                            <label>客戶電郵</label>
+                            <input type="email" id="clientEmail" placeholder="billing@client.com">
+                        </div>
+                    </div>
+
+                    <!-- Line Items -->
+                    <h3 style="margin: 24px 0 16px; font-size: 16px;">項目明細</h3>
+                    <div class="line-items-section" id="lineItems">
+                        <!-- Line items will be added here -->
+                    </div>
+                    <button type="button" class="btn-add-item" onclick="addLineItem()">+ 添加項目</button>
+
+                    <!-- Totals -->
+                    <div class="totals-section">
+                        <div class="total-row">
+                            <span>小計</span>
+                            <span id="subtotal">HK$ 0.00</span>
+                        </div>
+                        <div class="form-row" style="margin: 12px 0;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>稅率 (%)</label>
+                                <input type="number" id="taxRate" value="0" min="0" max="100" onchange="calculateTotals()">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>稅額</label>
+                                <input type="text" id="taxAmount" value="HK$ 0.00" readonly style="background: #f5f5f5;">
+                            </div>
+                        </div>
+                        <div class="total-row grand-total">
+                            <span>總計</span>
+                            <span id="totalAmount">HK$ 0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="form-group" style="margin-top: 24px;">
+                        <label>備註</label>
+                        <textarea id="notes" rows="3" placeholder="付款方式、銀行賬戶等..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeCreateModal()">取消</button>
+                    <button type="submit" class="btn btn-primary">保存發票</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div class="modal-overlay" id="previewModal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h2>發票預覽</h2>
+                <button class="modal-close" onclick="closePreviewModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="previewContent">
+                    <!-- Invoice preview will be rendered here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closePreviewModal()">關閉</button>
+                <button type="button" class="btn btn-primary" onclick="downloadPDF()">下載 PDF</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Load Supabase Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script src="../js/supabase-client.js"></script>
@@ -126,16 +511,14 @@
         
         let currentUser = null;
         let isDemoMode = false;
+        let currentInvoices = [];
         
-        // Check authentication on page load
         (async function init() {
             try {
-                // Check if Supabase is configured
                 if (SUPABASE_URL.includes('your-project-ref') || SUPABASE_ANON_KEY.includes('your-anon-key')) {
                     console.log('⚠️ Supabase not configured, using demo mode');
                     isDemoMode = true;
                     
-                    // Check localStorage fallback
                     const localLoggedIn = localStorage.getItem('aicountant-portal-logged-in') === 'true';
                     if (!localLoggedIn) {
                         window.location.href = 'login.html';
@@ -146,7 +529,6 @@
                     currentUser = { email: userEmail };
                     loadDemoInvoices();
                 } else {
-                    // Real Supabase auth check
                     const user = await getCurrentUser();
                     if (!user) {
                         window.location.href = 'login.html';
@@ -157,28 +539,80 @@
                     loadInvoices();
                 }
                 
-                // Display user info
                 updateUserDisplay();
+                
+                // Set default dates
+                document.getElementById('issueDate').valueAsDate = new Date();
+                const dueDate = new Date();
+                dueDate.setDate(dueDate.getDate() + 30);
+                document.getElementById('dueDate').valueAsDate = dueDate;
+                
+                // Add first line item
+                addLineItem();
                 
             } catch (error) {
                 console.error('Initialization error:', error);
             }
         })();
-        
+
         // ============================================
         // LOAD INVOICES
         // ============================================
         
         async function loadInvoices() {
+            if (isDemoMode) {
+                loadDemoInvoices();
+                return;
+            }
+            
             try {
-                const { data: invoices, error } = await supabaseClient
+                const statusFilter = document.getElementById('statusFilter').value;
+                const dateFilter = document.getElementById('dateFilter').value;
+                
+                let query = supabaseClient
                     .from('invoices')
                     .select('*')
                     .order('issue_date', { ascending: false });
                 
+                if (statusFilter) {
+                    query = query.eq('status', statusFilter);
+                }
+                
+                // Date filtering
+                if (dateFilter) {
+                    const today = new Date();
+                    let startDate, endDate;
+                    
+                    switch(dateFilter) {
+                        case 'this_month':
+                            startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+                            endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                            break;
+                        case 'last_month':
+                            startDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+                            endDate = new Date(today.getFullYear(), today.getMonth(), 0);
+                            break;
+                        case 'this_quarter':
+                            const quarter = Math.floor(today.getMonth() / 3);
+                            startDate = new Date(today.getFullYear(), quarter * 3, 1);
+                            endDate = new Date(today.getFullYear(), quarter * 3 + 3, 0);
+                            break;
+                    }
+                    
+                    if (startDate && endDate) {
+                        query = query.gte('issue_date', startDate.toISOString().split('T')[0])
+                                     .lte('issue_date', endDate.toISOString().split('T')[0]);
+                    }
+                }
+                
+                const { data: invoices, error } = await query;
+                
                 if (error) throw error;
                 
-                renderInvoices(invoices || []);
+                currentInvoices = invoices || [];
+                renderInvoices(currentInvoices);
+                updateSummary(currentInvoices);
+                
             } catch (error) {
                 console.error('Error loading invoices:', error);
                 renderEmptyInvoices();
@@ -193,20 +627,60 @@
                 return;
             }
             
-            tbody.innerHTML = invoices.map(inv => `
-                <tr>
-                    <td>${escapeHtml(inv.invoice_number)}</td>
-                    <td>${escapeHtml(inv.client_name)}</td>
-                    <td>${formatDate(inv.issue_date)}</td>
-                    <td>${formatDate(inv.due_date)}</td>
-                    <td>HK$ ${parseFloat(inv.total_amount).toLocaleString()}</td>
-                    <td><span class="status-badge status-${inv.status}">${getStatusLabel(inv.status)}</span></td>
-                    <td>
-                        <button class="btn-icon" onclick="viewInvoice('${inv.id}')" title="查看">👁️</button>
-                        <button class="btn-icon" onclick="downloadInvoice('${inv.id}')" title="下載">⬇️</button>
-                    </td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = invoices.map(inv => {
+                const isOverdue = inv.status === 'sent' && new Date(inv.due_date) < new Date();
+                const displayStatus = isOverdue ? 'overdue' : inv.status;
+                
+                return `
+                    <tr>
+                        <td>${escapeHtml(inv.invoice_number)}</td>
+                        <td>${escapeHtml(inv.client_name)}</td>
+                        <td>${formatDate(inv.issue_date)}</td>
+                        <td>${formatDate(inv.due_date)}</td>
+                        <td class="amount-cell">HK$ ${parseFloat(inv.total_amount).toLocaleString()}</td>
+                        <td><span class="status-badge status-${displayStatus}">${getStatusLabel(displayStatus)}</span></td>
+                        <td class="actions-cell">
+                            <button class="btn-icon" onclick="previewInvoice('${inv.id}')" title="預覽">👁️</button>
+                            <button class="btn-icon" onclick="editInvoice('${inv.id}')" title="編輯">✏️</button>
+                            <button class="btn-icon" onclick="markAsPaid('${inv.id}')" title="標記付款">✅</button>
+                            <button class="btn-icon" onclick="deleteInvoice('${inv.id}')" title="刪除">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function updateSummary(invoices) {
+            let pendingAmount = 0;
+            let pendingCount = 0;
+            let paidAmount = 0;
+            let overdueAmount = 0;
+            let overdueCount = 0;
+            
+            const today = new Date();
+            
+            invoices.forEach(inv => {
+                if (inv.status === 'sent') {
+                    if (new Date(inv.due_date) < today) {
+                        overdueAmount += parseFloat(inv.total_amount);
+                        overdueCount++;
+                    } else {
+                        pendingAmount += parseFloat(inv.total_amount);
+                        pendingCount++;
+                    }
+                } else if (inv.status === 'paid') {
+                    const paidDate = new Date(inv.paid_date || inv.issue_date);
+                    if (paidDate.getMonth() === today.getMonth() && paidDate.getFullYear() === today.getFullYear()) {
+                        paidAmount += parseFloat(inv.paid_amount || inv.total_amount);
+                    }
+                }
+            });
+            
+            document.getElementById('pendingAmount').textContent = `HK$ ${pendingAmount.toLocaleString()}`;
+            document.getElementById('pendingCount').textContent = `${pendingCount} 張待收款`;
+            document.getElementById('paidAmount').textContent = `HK$ ${paidAmount.toLocaleString()}`;
+            document.getElementById('overdueAmount').textContent = `HK$ ${overdueAmount.toLocaleString()}`;
+            document.getElementById('overdueCount').textContent = `${overdueCount} 張逾期`;
         }
         
         function renderEmptyInvoices() {
@@ -223,33 +697,288 @@
         
         function loadDemoInvoices() {
             const demoInvoices = [
-                { id: '1', invoice_number: 'INV-2024-001', client_name: 'ABC科技有限公司', issue_date: '2024-03-15', due_date: '2024-04-15', total_amount: 45000, status: 'sent' },
-                { id: '2', invoice_number: 'INV-2024-002', client_name: 'XYZ顧問公司', issue_date: '2024-03-10', due_date: '2024-04-10', total_amount: 28000, status: 'paid' },
-                { id: '3', invoice_number: 'INV-2024-003', client_name: '客戶C有限公司', issue_date: '2024-03-05', due_date: '2024-04-05', total_amount: 15000, status: 'overdue' }
+                { id: '1', invoice_number: 'INV-2024-001', client_name: 'ABC科技有限公司', client_email: 'accounts@abc-tech.com', issue_date: '2024-03-15', due_date: '2024-04-15', subtotal: 45000, tax_rate: 0, tax_amount: 0, total_amount: 45000, status: 'sent', notes: '網站開發項目第一期' },
+                { id: '2', invoice_number: 'INV-2024-002', client_name: 'XYZ顧問公司', client_email: 'billing@xyz-consulting.com', issue_date: '2024-03-10', due_date: '2024-04-10', subtotal: 28000, tax_rate: 0, tax_amount: 0, total_amount: 28000, status: 'paid', paid_date: '2024-03-12', paid_amount: 28000, notes: '顧問服務費 2024年Q1' },
+                { id: '3', invoice_number: 'INV-2024-003', client_name: '客戶C有限公司', client_email: 'finance@client-c.com', issue_date: '2024-03-05', due_date: '2024-03-20', subtotal: 15000, tax_rate: 0, tax_amount: 0, total_amount: 15000, status: 'sent', notes: '軟件許可費 - 請盡快付款' },
+                { id: '4', invoice_number: 'INV-2024-004', client_name: '創新科技有限公司', client_email: 'ap@innovation-tech.com', issue_date: '2024-03-01', due_date: '2024-04-01', subtotal: 32000, tax_rate: 0, tax_amount: 0, total_amount: 32000, status: 'draft', notes: '網站設計項目' }
             ];
+            currentInvoices = demoInvoices;
             renderInvoices(demoInvoices);
+            updateSummary(demoInvoices);
         }
-        
+
         // ============================================
-        // ACTIONS
+        // CREATE INVOICE
         // ============================================
         
         function showCreateModal() {
-            if (isDemoMode) {
-                alert('演示模式：創建發票功能需要配置 Supabase');
-            } else {
-                alert('創建發票功能開發中...');
+            document.getElementById('createModal').classList.add('active');
+            // Auto-generate invoice number
+            const today = new Date();
+            const invoiceNum = `INV-${today.getFullYear()}-${String(currentInvoices.length + 1).padStart(3, '0')}`;
+            document.getElementById('invoiceNumber').value = invoiceNum;
+        }
+        
+        function closeCreateModal() {
+            document.getElementById('createModal').classList.remove('active');
+            document.getElementById('invoiceForm').reset();
+            // Reset dates
+            document.getElementById('issueDate').valueAsDate = new Date();
+            const dueDate = new Date();
+            dueDate.setDate(dueDate.getDate() + 30);
+            document.getElementById('dueDate').valueAsDate = dueDate;
+            // Reset line items
+            document.getElementById('lineItems').innerHTML = '';
+            addLineItem();
+            calculateTotals();
+        }
+        
+        let lineItemCount = 0;
+        
+        function addLineItem() {
+            lineItemCount++;
+            const container = document.getElementById('lineItems');
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'line-item';
+            itemDiv.id = `line-item-${lineItemCount}`;
+            itemDiv.innerHTML = `
+                <input type="text" placeholder="項目描述" class="item-desc" required onchange="calculateTotals()">
+                <input type="number" placeholder="數量" class="item-qty" value="1" min="1" onchange="calculateTotals()">
+                <input type="number" placeholder="單價" class="item-price" min="0" step="0.01" onchange="calculateTotals()">
+                <div class="line-item-total item-total">HK$ 0.00</div>
+                <button type="button" class="btn-icon" onclick="removeLineItem(${lineItemCount})" title="刪除">🗑️</button>
+            `;
+            container.appendChild(itemDiv);
+        }
+        
+        function removeLineItem(id) {
+            const item = document.getElementById(`line-item-${id}`);
+            if (item) {
+                item.remove();
+                calculateTotals();
             }
         }
         
-        function viewInvoice(id) {
-            alert('查看發票：' + id);
+        function calculateTotals() {
+            let subtotal = 0;
+            
+            document.querySelectorAll('.line-item').forEach(item => {
+                const qty = parseFloat(item.querySelector('.item-qty').value) || 0;
+                const price = parseFloat(item.querySelector('.item-price').value) || 0;
+                const total = qty * price;
+                item.querySelector('.item-total').textContent = `HK$ ${total.toFixed(2)}`;
+                subtotal += total;
+            });
+            
+            const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+            const taxAmount = subtotal * (taxRate / 100);
+            const total = subtotal + taxAmount;
+            
+            document.getElementById('subtotal').textContent = `HK$ ${subtotal.toFixed(2)}`;
+            document.getElementById('taxAmount').value = `HK$ ${taxAmount.toFixed(2)}`;
+            document.getElementById('totalAmount').textContent = `HK$ ${total.toFixed(2)}`;
         }
         
-        function downloadInvoice(id) {
-            alert('下載發票：' + id);
+        document.getElementById('invoiceForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (isDemoMode) {
+                alert('演示模式：無法保存數據。請配置 Supabase 以使用完整功能。');
+                closeCreateModal();
+                return;
+            }
+            
+            // Collect line items
+            const lineItems = [];
+            document.querySelectorAll('.line-item').forEach(item => {
+                lineItems.push({
+                    description: item.querySelector('.item-desc').value,
+                    quantity: parseFloat(item.querySelector('.item-qty').value) || 0,
+                    unit_price: parseFloat(item.querySelector('.item-price').value) || 0,
+                    total_price: parseFloat(item.querySelector('.item-total').textContent.replace('HK$ ', '')) || 0
+                });
+            });
+            
+            const invoice = {
+                invoice_number: document.getElementById('invoiceNumber').value,
+                client_name: document.getElementById('clientName').value,
+                client_email: document.getElementById('clientEmail').value,
+                issue_date: document.getElementById('issueDate').value,
+                due_date: document.getElementById('dueDate').value,
+                status: document.getElementById('invoiceStatus').value,
+                subtotal: parseFloat(document.getElementById('subtotal').textContent.replace('HK$ ', '')),
+                tax_rate: parseFloat(document.getElementById('taxRate').value) || 0,
+                tax_amount: parseFloat(document.getElementById('taxAmount').value.replace('HK$ ', '')),
+                total_amount: parseFloat(document.getElementById('totalAmount').textContent.replace('HK$ ', '')),
+                notes: document.getElementById('notes').value,
+                paid_amount: 0
+            };
+            
+            try {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                
+                // Insert invoice
+                const { data: newInvoice, error: invError } = await supabaseClient
+                    .from('invoices')
+                    .insert([{ ...invoice, user_id: user.id }])
+                    .select()
+                    .single();
+                
+                if (invError) throw invError;
+                
+                // Insert line items
+                if (lineItems.length > 0) {
+                    const itemsWithInvoice = lineItems.map(item => ({
+                        ...item,
+                        invoice_id: newInvoice.id
+                    }));
+                    
+                    const { error: itemsError } = await supabaseClient
+                        .from('invoice_items')
+                        .insert(itemsWithInvoice);
+                    
+                    if (itemsError) throw itemsError;
+                }
+                
+                closeCreateModal();
+                loadInvoices();
+                alert('發票創建成功！');
+                
+            } catch (error) {
+                console.error('Error creating invoice:', error);
+                alert('創建失敗：' + error.message);
+            }
+        });
+
+        // ============================================
+        // INVOICE ACTIONS
+        // ============================================
+        
+        function previewInvoice(id) {
+            const invoice = currentInvoices.find(inv => inv.id === id);
+            if (!invoice) return;
+            
+            const previewHTML = `
+                <div class="preview-invoice">
+                    <div class="preview-header">
+                        <div class="preview-company">
+                            <h3>您的公司名稱</h3>
+                            <p>公司地址<br>電話：+852 1234 5678<br>電郵：info@yourcompany.com</p>
+                        </div>
+                        <div class="preview-invoice-info">
+                            <h2>發票</h2>
+                            <p><strong>發票編號：</strong>${escapeHtml(invoice.invoice_number)}</p>
+                            <p><strong>發票日期：</strong>${formatDate(invoice.issue_date)}</p>
+                            <p><strong>到期日：</strong>${formatDate(invoice.due_date)}</p>
+                            <p><strong>狀態：</strong>${getStatusLabel(invoice.status)}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-client">
+                        <h4>發送至：</h4>
+                        <p><strong>${escapeHtml(invoice.client_name)}</strong></p>
+                        <p>${escapeHtml(invoice.client_email || '')}</p>
+                    </div>
+                    
+                    <table class="preview-table">
+                        <thead>
+                            <tr>
+                                <th>描述</th>
+                                <th>數量</th>
+                                <th>單價</th>
+                                <th>金額</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>服務費用</td>
+                                <td>1</td>
+                                <td>HK$ ${parseFloat(invoice.subtotal).toLocaleString()}</td>
+                                <td>HK$ ${parseFloat(invoice.subtotal).toLocaleString()}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="preview-totals">
+                        <p>小計：HK$ ${parseFloat(invoice.subtotal).toLocaleString()}</p>
+                        ${invoice.tax_amount > 0 ? `<p>稅額 (${invoice.tax_rate}%): HK$ ${parseFloat(invoice.tax_amount).toLocaleString()}</p>` : ''}
+                        <p style="font-size: 18px; font-weight: 600; margin-top: 12px;">
+                            總計：HK$ ${parseFloat(invoice.total_amount).toLocaleString()}
+                        </p>
+                    </div>
+                    
+                    ${invoice.notes ? `<div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;"><p><strong>備註：</strong></p><p>${escapeHtml(invoice.notes)}</p></div>` : ''}
+                </div>
+            `;
+            
+            document.getElementById('previewContent').innerHTML = previewHTML;
+            document.getElementById('previewModal').classList.add('active');
         }
         
+        function closePreviewModal() {
+            document.getElementById('previewModal').classList.remove('active');
+        }
+        
+        function downloadPDF() {
+            alert('PDF 下載功能開發中...\n實際應用中將使用 jsPDF 或類似庫生成 PDF');
+        }
+        
+        function editInvoice(id) {
+            alert('編輯功能開發中...');
+        }
+        
+        async function markAsPaid(id) {
+            if (!confirm('將此發票標記為已付款？')) return;
+            
+            if (isDemoMode) {
+                alert('演示模式：無法更新數據');
+                return;
+            }
+            
+            try {
+                const { error } = await supabaseClient
+                    .from('invoices')
+                    .update({
+                        status: 'paid',
+                        paid_date: new Date().toISOString().split('T')[0],
+                        paid_amount: currentInvoices.find(inv => inv.id === id)?.total_amount || 0
+                    })
+                    .eq('id', id);
+                
+                if (error) throw error;
+                
+                loadInvoices();
+                alert('已標記為付款！');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('操作失敗');
+            }
+        }
+        
+        async function deleteInvoice(id) {
+            if (!confirm('確定要刪除此發票嗎？此操作無法撤銷。')) return;
+            
+            if (isDemoMode) {
+                alert('演示模式：無法刪除數據');
+                return;
+            }
+            
+            try {
+                // Delete line items first
+                await supabaseClient.from('invoice_items').delete().eq('invoice_id', id);
+                
+                // Delete invoice
+                const { error } = await supabaseClient.from('invoices').delete().eq('id', id);
+                if (error) throw error;
+                
+                loadInvoices();
+                alert('已刪除！');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('刪除失敗');
+            }
+        }
+
         // ============================================
         // HELPER FUNCTIONS
         // ============================================
@@ -292,6 +1021,15 @@
             };
             return labels[status] || status;
         }
+        
+        // Close modals when clicking outside
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
     </script>
 </body>
 </html>

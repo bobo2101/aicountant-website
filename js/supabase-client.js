@@ -15,8 +15,8 @@
 
 // Option 1: Hardcoded values (for quick testing only)
 // Replace with your actual Supabase credentials
-const SUPABASE_URL = 'https://your-project-ref.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGc...your-anon-key';
+const SUPABASE_URL = 'https://lwmgekggcpwfxnyphlpc.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3bWdla2dnY3B3ZnhueXBobHBjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyMzQ5NzgsImV4cCI6MjA4ODgxMDk3OH0.Ilr64FehKCbfoqzPNVgAxcGDVBTiizQyn18QM3HFDiY';
 
 // Option 2: Environment variables (recommended for production)
 // Uncomment below if using build tools that support env vars
@@ -85,7 +85,7 @@ initSupabase();
  */
 async function getCurrentUser() {
     if (!supabaseClient) return null;
-    
+
     try {
         const { data: { user }, error } = await supabaseClient.auth.getUser();
         if (error) throw error;
@@ -102,7 +102,7 @@ async function getCurrentUser() {
  */
 async function isLoggedIn() {
     if (!supabaseClient) return false;
-    
+
     try {
         const { data: { session }, error } = await supabaseClient.auth.getSession();
         if (error) throw error;
@@ -149,7 +149,7 @@ async function signUp(email, password, metadata = {}) {
         });
 
         if (error) throw error;
-        
+
         console.log('✅ Sign up successful:', data.user.email);
         return { data, error: null };
     } catch (error) {
@@ -176,7 +176,7 @@ async function signIn(email, password) {
         });
 
         if (error) throw error;
-        
+
         console.log('✅ Sign in successful:', data.user.email);
         return { data, error: null };
     } catch (error) {
@@ -197,15 +197,15 @@ async function signOut() {
     try {
         const { error } = await supabaseClient.auth.signOut();
         if (error) throw error;
-        
+
         console.log('✅ Sign out successful');
-        
+
         // Clear any local storage items
         localStorage.removeItem('aicountant-portal-user');
-        
+
         // Redirect to login
         window.location.href = 'login.html';
-        
+
         return { error: null };
     } catch (error) {
         console.error('❌ Sign out failed:', error.message);
@@ -229,7 +229,7 @@ async function resetPassword(email) {
         });
 
         if (error) throw error;
-        
+
         console.log('✅ Password reset email sent');
         return { data, error: null };
     } catch (error) {
@@ -254,7 +254,7 @@ async function updatePassword(newPassword) {
         });
 
         if (error) throw error;
-        
+
         console.log('✅ Password updated successfully');
         return { data, error: null };
     } catch (error) {
