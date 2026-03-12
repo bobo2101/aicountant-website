@@ -363,22 +363,50 @@
                 if (error) throw error;
                 
                 // Update password if provided
+                const currentPassword = document.getElementById('currentPassword').value;
                 const newPassword = document.getElementById('newPassword').value;
                 const confirmPassword = document.getElementById('confirmPassword').value;
                 
                 if (newPassword) {
+                    // Verify current password first
+                    if (!currentPassword) {
+                        alert('請輸入當前密碼以驗證身份');
+                        saveBtn.disabled = false;
+                        saveBtn.textContent = '保存更改';
+                        return;
+                    }
+                    
+                    // Check if current password is correct by trying to sign in
+                    const { error: signInError } = await supabaseClient.auth.signInWithPassword({
+                        email: currentUser.email,
+                        password: currentPassword
+                    });
+                    
+                    if (signInError) {
+                        alert('當前密碼不正確');
+                        saveBtn.disabled = false;
+                        saveBtn.textContent = '保存更改';
+                        return;
+                    }
+                    
                     if (newPassword !== confirmPassword) {
                         alert('新密碼與確認密碼不匹配');
+                        saveBtn.disabled = false;
+                        saveBtn.textContent = '保存更改';
                         return;
                     }
                     
                     if (newPassword.length < 6) {
                         alert('密碼至少需要6個字符');
+                        saveBtn.disabled = false;
+                        saveBtn.textContent = '保存更改';
                         return;
                     }
                     
                     const { error: pwdError } = await updatePassword(newPassword);
                     if (pwdError) throw pwdError;
+                    
+                    alert('密碼已成功更新！');
                 }
                 
                 showSuccess();
