@@ -7,22 +7,14 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': '*',
 }
 
-// Resize image to reduce token usage
-async function resizeImage(buffer: ArrayBuffer, maxWidth: number = 800): Promise<string> {
-  // For now, just truncate base64 to reduce tokens
-  // In production, use sharp or similar library
+// Convert ArrayBuffer to base64 safely (chunked)
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
   const bytes = new Uint8Array(buffer)
-  
-  // Skip bytes to reduce size (every 2nd byte for 50% reduction)
-  const sampledBytes = new Uint8Array(Math.floor(bytes.length / 2))
-  for (let i = 0; i < sampledBytes.length; i++) {
-    sampledBytes[i] = bytes[i * 2]
-  }
-  
-  // Convert to base64
   let binary = ''
-  for (let i = 0; i < sampledBytes.length; i++) {
-    binary += String.fromCharCode(sampledBytes[i])
+  const len = bytes.byteLength
+  for (let i = 0; i < len; i += 1024) {
+    const chunk = bytes.subarray(i, Math.min(i + 1024, len))
+    binary += String.fromCharCode.apply(null, Array.from(chunk))
   }
   return btoa(binary)
 }
@@ -57,12 +49,20 @@ serve(async (req) => {
 
     if (fileError) throw new Error(`Download failed: ${fileError.message}`)
 
-    // Resize and convert to base64 (reduced size for token limit)
+    // Convert to base64
     const arrayBuffer = await fileData.arrayBuffer()
     console.log('Original size:', arrayBuffer.byteLength, 'bytes')
     
-    const base64Image = await resizeImage(arrayBuffer, 800)
-    console.log('Resized base64 length:', base64Image.length)
+    const base64Image = arrayBufferToBase64(arrayBuffer)
+    console.log('Base64 length:', base64Image.length)
+
+    // Truncate to fit token limit (keep first 80KB of base64 ~60K tokens)
+    const maxBase64Length = 80000
+    const truncatedBase64 = base64Image.length > maxBase64Length 
+      ? base64Image.substring(0, maxBase64Length) 
+      : base64Image
+    
+    console.log('Truncated to:', truncatedBase64.length)
 
     const DEEPSEEK_API_KEY = Deno.env.get('DEEPSEEK_API_KEY')
     
@@ -83,15 +83,27 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `Extract invoice/receipt data as JSON: {amount: number, date: "YYYY-MM-DD", vendor: string, invoiceNumber: string, documentType: "invoice|receipt|other"}. Return JSON only.`
+            content: `You are an OCR assistant specialized in extracting information from receipts and invoices.
+
+Analyze the provided image and extract the following fields as JSON:
+- amount: Total amount as number (remove currency symbols, use decimal point)
+- date: Date in YYYY-MM-DD format
+- vendor: Company/merchant name
+- invoiceNumber: Invoice or receipt number
+- documentType: One of "invoice", "receipt", or "other"
+
+Return ONLY a valid JSON object in this exact format:
+{"amount": 123.45, "date": "2024-03-12", "vendor": "Company Name", "invoiceNumber": "INV-001", "documentType": "invoice"}
+
+If a field cannot be found, use null. Be precise with amounts and dates.`
           },
           {
             role: 'user',
-            content: `Extract from this receipt image:\ndata:image/jpeg;base64,${base64Image}`
+            content: `Extract information from this receipt/invoice image (base64 encoded JPEG, may be truncated if large):\n\n[IMAGE_START]\ndata:image/jpeg;base64,${truncatedBase64}\n[IMAGE_END]\n\nExtract: amount, date (YYYY-MM-DD), vendor name, invoice/receipt number, document type. Return JSON only.`
           }
         ],
         temperature: 0.1,
-        max_tokens: 300
+        max_tokens: 400
       })
     })
 
@@ -103,12 +115,12 @@ serve(async (req) => {
     const apiData = await response.json()
     const aiContent = apiData.choices?.[0]?.message?.content || ''
     
-    console.log('AI response:', aiContent.substring(0, 200))
+    console.log('AI response:', aiContent.substring(0, 400))
 
     // Parse JSON
     let parsed: any = {}
     try {
-      const jsonMatch = aiContent.match(/\{[^}]+\}/)
+      const jsonMatch = aiContent.match(/\{[\s\S]*?\}/)
       if (jsonMatch) {
         parsed = JSON.parse(jsonMatch[0])
       }
@@ -118,10 +130,10 @@ serve(async (req) => {
 
     // Calculate confidence
     let filledFields = 0
-    if (parsed.amount) filledFields++
-    if (parsed.date) filledFields++
-    if (parsed.vendor) filledFields++
-    if (parsed.invoiceNumber) filledFields++
+    if (parsed.amount && parsed.amount > 0) filledFields++
+    if (parsed.date && parsed.date !== 'null') filledFields++
+    if (parsed.vendor && parsed.vendor !== 'null') filledFields++
+    if (parsed.invoiceNumber && parsed.invoiceNumber !== 'null') filledFields++
     const confidence = filledFields / 4
 
     const result: OCRResult = {

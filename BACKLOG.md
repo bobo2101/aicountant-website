@@ -60,6 +60,53 @@ const publicUrl = data.signedUrl;
 |------|---------|------|
 | original_file_size 字段错误 | 2026-03-11 | 移除了代码中对该字段的引用 |
 | Bucket not found 错误 | 2026-03-11 | bucket 存在但权限问题，已确认为 Public bucket 设置 |
+| OCR 基础功能 | 2026-03-12 | DeepSeek API 集成完成，可识别并显示结果 |
+
+### 待优化 🔄
+
+| 问题 | 优先级 | 说明 |
+|------|--------|------|
+| OCR 准确度提升 | 中 | 当前识别率约 40-60%，需优化 |
+
+---
+
+## 🎯 OCR 准确度优化计划
+
+### 当前状态
+- ✅ API 调用正常
+- ✅ 结果显示正常
+- ⚠️ 识别准确率约 40-60%
+
+### 优化方案选项
+
+**方案 A: 调整提示词和参数**
+- 优化 system prompt，更详细描述字段位置
+- 调整 temperature 和 max_tokens
+- 尝试不同的消息格式
+
+**方案 B: 图片预处理**
+- 增加图片对比度/亮度
+- 旋转校正
+- 去除噪点
+
+**方案 C: 更换 OCR 服务商**
+- Google Vision API（准确率更高，但成本高 10x）
+- Azure Form Recognizer
+- AWS Textract
+
+**方案 D: 混合策略**
+- 先用 DeepSeek（便宜）
+- 低 confidence 时 fallback 到 Google Vision
+
+### 建议
+目前系统可用，建议：
+1. 先用现有版本收集用户反馈
+2. 根据实际使用场景决定是否升级 OCR
+3. 如需高准确度，建议切换到 Google Vision API
+
+---
+
+## 🐛 已知问题（续）
 
 ---
 
@@ -126,7 +173,42 @@ const translations = {
 
 ---
 
+## 🚀 部署与版本控制
+
+### 3. GitHub 版本控制与 Vercel 部署
+**优先级**: 高  
+**状态**: 代码已推送，待部署  
+**最后更新**: 2026-03-12
+
+#### 已完成 ✅
+- [x] 清理临时文件 (ocr-process-dev, ocr-simple, test files)
+- [x] 提交 OCR 修复到 GitHub (commit: 076acfa)
+- [x] 代码推送到 origin/main
+
+#### 待完成 📋
+- [ ] Vercel 项目配置
+  - [ ] 登录 vercel.com/dashboard
+  - [ ] 导入 GitHub 仓库 `bobo2101/aicountant-website`
+  - [ ] 或重新连接现有项目
+- [ ] 部署配置
+  - [ ] Framework: Other
+  - [ ] Build Command: (empty)
+  - [ ] Output Directory: (empty)
+- [ ] 环境变量配置（如有需要）
+- [ ] 生产环境测试
+  - [ ] 访问 https://aicountant-website.vercel.app
+  - [ ] 测试登录功能
+  - [ ] 测试文件上传
+  - [ ] 测试 OCR 功能
+
+#### 注意事项
+- 免费版 Vercel 支持私有仓库 ✅
+- 需要更新 `js/supabase-client.js` 中的 Anon Key（生产环境）
+- 确保 Supabase 允许 Vercel 域名访问
+
+---
+
 ## 📝 记录维护
 - 创建日期：2026-03-11
-- 最后更新：2026-03-11
+- 最后更新：2026-03-12
 - 维护人：开发团队
