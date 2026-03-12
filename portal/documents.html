@@ -666,7 +666,7 @@
                 const compressedFile = await compressImage(file);
                 console.log(`Compressed ${file.name}: ${(file.size/1024).toFixed(1)}KB → ${(compressedFile.size/1024).toFixed(1)}KB (${((1-compressedFile.size/file.size)*100).toFixed(0)}% reduction)`);
                 
-                await uploadFile(compressedFile, file.size); // Pass original size for tracking
+                await uploadFile(compressedFile);
             }
         }
         
@@ -719,7 +719,7 @@
             });
         }
         
-        async function uploadFile(file, originalSize = null) {
+        async function uploadFile(file) {
             const progressDiv = document.getElementById('uploadProgress');
             const fileNameSpan = document.getElementById('uploadFileName');
             const percentSpan = document.getElementById('uploadPercent');
@@ -754,9 +754,6 @@
                     .from('documents')
                     .getPublicUrl(filePath);
                 
-                // Calculate compression ratio
-                const compressionRatio = originalSize ? ((1 - file.size / originalSize) * 100).toFixed(0) : 0;
-                
                 // Save document metadata to database
                 const { error: dbError } = await supabaseClient
                     .from('documents')
@@ -766,7 +763,6 @@
                         original_name: file.name,
                         file_type: file.type.includes('pdf') ? 'pdf' : 'image',
                         file_size: file.size,
-                        original_file_size: originalSize || file.size,
                         mime_type: file.type,
                         storage_path: filePath,
                         public_url: publicUrl,
@@ -781,11 +777,6 @@
                     progressDiv.classList.remove('active');
                     progressFill.style.width = '0%';
                     loadDocuments();
-                    
-                    // Show compression info
-                    if (compressionRatio > 10) {
-                        console.log(`✅ 圖片已壓縮 ${compressionRatio}%，節省存儲空間`);
-                    }
                     
                     // Trigger OCR processing
                     processOCR(filePath, user.id);
