@@ -73,6 +73,59 @@ const publicUrl = data.signedUrl;
 
 ---
 
+## 🌐 国际化 (i18n)
+
+### 2. Portal 多语言支持
+**优先级**: 高  
+**状态**: 待规划  
+**需求**: 支持 3 种语言
+
+#### 目标语言
+| 语言 | 代码 | 优先级 |
+|------|------|--------|
+| English | `en` | P1 |
+| 繁體中文 (Traditional Chinese) | `zh-HK` / `zh-TW` | P1 |
+| 简体中文 (Simplified Chinese) | `zh-CN` | P1 |
+
+#### 需要翻译的页面
+- [ ] `portal/login.html` - 登录页
+- [ ] `portal/dashboard.html` - 仪表板
+- [ ] `portal/documents.html` - 文件管理
+- [ ] `portal/transactions.html` - 交易记录
+- [ ] `portal/invoices.html` - 发票管理
+- [ ] `portal/settings.html` - 设置
+
+#### 实现方案选项
+
+**选项 A: 前端 i18n 库（推荐）**
+```javascript
+// 使用 i18next 或类似库
+const translations = {
+  'en': { 'upload_file': 'Upload File', ... },
+  'zh-HK': { 'upload_file': '上傳文件', ... },
+  'zh-CN': { 'upload_file': '上传文件', ... }
+};
+```
+
+**选项 B: 多版本 HTML 文件**
+- `documents.html` (默认繁体)
+- `documents-en.html` (英文)
+- `documents-cn.html` (简体)
+
+#### 语言切换 UI
+- 在 Portal 顶部导航添加语言选择器
+- 保存用户语言偏好到 localStorage
+- 默认根据浏览器语言自动检测
+
+#### 实施步骤
+1. 提取所有需要翻译的文本
+2. 创建翻译文件/对象
+3. 实现语言切换组件
+4. 测试所有页面的翻译
+5. 更新用户文档
+
+---
+
 ## 📝 记录维护
 - 创建日期：2026-03-11
 - 最后更新：2026-03-11

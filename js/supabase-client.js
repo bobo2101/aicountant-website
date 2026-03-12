@@ -16,6 +16,9 @@
 // Option 1: Hardcoded values (for quick testing only)
 // Replace with your actual Supabase credentials
 const SUPABASE_URL = 'https://lwmgekggcpwfxnyphlpc.supabase.co';
+// Get from https://supabase.com/dashboard/project/lwmgekggcpwfxnyphlpc/settings/api
+// If you get "Invalid JWT" error, replace this with the current anon key from dashboard
+// ⚠️ 从 Dashboard → Settings → API 获取 anon key (以 eyJhbGci 开头)
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3bWdla2dnY3B3ZnhueXBobHBjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyMzQ5NzgsImV4cCI6MjA4ODgxMDk3OH0.Ilr64FehKCbfoqzPNVgAxcGDVBTiizQyn18QM3HFDiY';
 
 // Option 2: Environment variables (recommended for production)
