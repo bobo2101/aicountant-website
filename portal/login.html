@@ -153,6 +153,11 @@
                     <input type="password" id="registerPassword" name="password" placeholder="至少6個字符" required minlength="6" autocomplete="new-password">
                 </div>
                 <div class="form-group">
+                    <label for="registerPasswordConfirm">確認密碼</label>
+                    <input type="password" id="registerPasswordConfirm" name="password_confirm" placeholder="再次輸入密碼" required autocomplete="new-password">
+                    <small id="passwordMatchError" style="color: #c62828; font-size: 12px; display: none;">密碼不匹配</small>
+                </div>
+                <div class="form-group">
                     <label for="registerName">姓名 / 公司名稱</label>
                     <input type="text" id="registerName" name="full_name" placeholder="您的姓名或公司名稱">
                 </div>
@@ -324,6 +329,13 @@
                 return;
             }
             
+            // Check password confirmation
+            const confirmPassword = document.getElementById('registerPasswordConfirm').value;
+            if (password !== confirmPassword) {
+                showError('兩次輸入的密碼不一致');
+                return;
+            }
+            
             // Show loading
             registerBtn.classList.add('btn-loading');
             registerBtn.textContent = '註冊中';
@@ -478,8 +490,24 @@
         document.getElementById('loginEmail').addEventListener('input', hideMessages);
         document.getElementById('loginPassword').addEventListener('input', hideMessages);
         document.getElementById('registerEmail').addEventListener('input', hideMessages);
-        document.getElementById('registerPassword').addEventListener('input', hideMessages);
+        document.getElementById('registerPassword').addEventListener('input', validatePasswordMatch);
+        document.getElementById('registerPasswordConfirm').addEventListener('input', validatePasswordMatch);
         document.getElementById('resetEmail').addEventListener('input', hideMessages);
+        
+        // Password match validation
+        function validatePasswordMatch() {
+            const password = document.getElementById('registerPassword').value;
+            const confirm = document.getElementById('registerPasswordConfirm').value;
+            const errorEl = document.getElementById('passwordMatchError');
+            
+            if (confirm && password !== confirm) {
+                errorEl.style.display = 'block';
+                document.getElementById('registerBtn').disabled = true;
+            } else {
+                errorEl.style.display = 'none';
+                document.getElementById('registerBtn').disabled = false;
+            }
+        }
     </script>
 </body>
 </html>

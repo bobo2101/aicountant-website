@@ -360,9 +360,14 @@
             <div class="content-card">
                 <div class="card-header">
                     <h3>發票列表</h3>
-                    <button class="btn btn-primary" style="padding: 8px 16px; font-size: 13px;" onclick="showCreateModal()">
-                        + 創建發票
-                    </button>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 13px;" onclick="showCustomerModal()">
+                            👥 客戶管理
+                        </button>
+                        <button class="btn btn-primary" style="padding: 8px 16px; font-size: 13px;" onclick="showCreateModal()">
+                            + 創建發票
+                        </button>
+                    </div>
                 </div>
                 <div class="card-body">
                     <table class="invoice-table">
@@ -500,6 +505,82 @@
         </div>
     </div>
 
+    <!-- Customer Management Modal -->
+    <div class="modal-overlay" id="customerModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>客戶管理</h2>
+                <button class="modal-close" onclick="closeCustomerModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="customerList">
+                    <!-- Customer list will be rendered here -->
+                </div>
+                <hr style="margin: 24px 0;">
+                <h3 style="margin-bottom: 16px;">添加新客戶</h3>
+                <form id="customerForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>客戶名稱</label>
+                            <input type="text" id="newCustomerName" required placeholder="公司名稱">
+                        </div>
+                        <div class="form-group">
+                            <label>電郵</label>
+                            <input type="email" id="newCustomerEmail" placeholder="billing@company.com">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>電話</label>
+                            <input type="tel" id="newCustomerPhone" placeholder="+852 1234 5678">
+                        </div>
+                        <div class="form-group">
+                            <label>地址</label>
+                            <input type="text" id="newCustomerAddress" placeholder="公司地址">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">添加客戶</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email Invoice Modal -->
+    <div class="modal-overlay" id="emailModal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>發送發票</h2>
+                <button class="modal-close" onclick="closeEmailModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="emailForm">
+                    <div class="form-group">
+                        <label>收件人電郵</label>
+                        <input type="email" id="emailRecipient" required>
+                    </div>
+                    <div class="form-group">
+                        <label>主旨</label>
+                        <input type="text" id="emailSubject" value="發票 - " required>
+                    </div>
+                    <div class="form-group">
+                        <label>郵件內容</label>
+                        <textarea id="emailBody" rows="5" placeholder="尊敬的客戶，請查收附件發票..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="attachPDF" checked> 附加 PDF 發票
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">發送郵件</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load jsPDF for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    
     <!-- Load Supabase Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script src="../js/supabase-client.js"></script>
@@ -512,6 +593,8 @@
         let currentUser = null;
         let isDemoMode = false;
         let currentInvoices = [];
+        let customers = JSON.parse(localStorage.getItem('aicountant-customers') || '[]');
+        let currentPreviewInvoice = null;
         
         (async function init() {
             try {
@@ -641,7 +724,7 @@
                         <td><span class="status-badge status-${displayStatus}">${getStatusLabel(displayStatus)}</span></td>
                         <td class="actions-cell">
                             <button class="btn-icon" onclick="previewInvoice('${inv.id}')" title="預覽">👁️</button>
-                            <button class="btn-icon" onclick="editInvoice('${inv.id}')" title="編輯">✏️</button>
+                            <button class="btn-icon" onclick="showEmailModal('${inv.id}')" title="發送郵件">📧</button>
                             <button class="btn-icon" onclick="markAsPaid('${inv.id}')" title="標記付款">✅</button>
                             <button class="btn-icon" onclick="deleteInvoice('${inv.id}')" title="刪除">🗑️</button>
                         </td>
@@ -705,6 +788,16 @@
             currentInvoices = demoInvoices;
             renderInvoices(demoInvoices);
             updateSummary(demoInvoices);
+            loadDemoCustomers();
+        }
+        
+        function loadDemoCustomers() {
+            customers = [
+                { name: 'ABC科技有限公司', email: 'accounts@abc-tech.com', phone: '+852 2345 6789', address: '香港中環德輔道中100號' },
+                { name: 'XYZ顧問公司', email: 'billing@xyz-consulting.com', phone: '+852 3456 7890', address: '香港灣仔軒尼詩道200號' },
+                { name: '客戶C有限公司', email: 'finance@client-c.com', phone: '+852 4567 8901', address: '香港尖沙咀廣東道300號' }
+            ];
+            localStorage.setItem('aicountant-customers', JSON.stringify(customers));
         }
 
         // ============================================
@@ -978,6 +1071,251 @@
                 alert('刪除失敗');
             }
         }
+
+        // ============================================
+        // HELPER FUNCTIONS
+        // ============================================
+        
+        function updateUserDisplay() {
+            if (!currentUser) return;
+            const userName = currentUser.email ? currentUser.email.split('@')[0] : '用戶';
+            document.getElementById('userName').textContent = userName;
+        }
+        
+        function handleLogout() {
+            if (isDemoMode) {
+                localStorage.removeItem('aicountant-portal-logged-in');
+                localStorage.removeItem('aicountant-portal-user');
+                window.location.href = 'login.html';
+            } else {
+                signOut();
+            }
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('zh-HK');
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function getStatusLabel(status) {
+            const labels = {
+                'draft': '草稿',
+                'sent': '已發送',
+                'paid': '已付款',
+                'overdue': '逾期',
+                'cancelled': '已取消'
+            };
+            return labels[status] || status;
+        }
+        
+        // ============================================
+        // CUSTOMER MANAGEMENT
+        // ============================================
+        
+        function showCustomerModal() {
+            renderCustomerList();
+            document.getElementById('customerModal').classList.add('active');
+        }
+        
+        function closeCustomerModal() {
+            document.getElementById('customerModal').classList.remove('active');
+            document.getElementById('customerForm').reset();
+        }
+        
+        function renderCustomerList() {
+            const container = document.getElementById('customerList');
+            if (customers.length === 0) {
+                container.innerHTML = '<p style="color: #666; text-align: center;">暫無客戶</p>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <h3 style="margin-bottom: 16px;">現有客戶</h3>
+                <div style="max-height: 300px; overflow-y: auto;">
+                    ${customers.map((cust, index) => `
+                        <div style="padding: 12px; background: #f8f9fa; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong>${escapeHtml(cust.name)}</strong>
+                                <p style="font-size: 13px; color: #666; margin: 4px 0 0;">${escapeHtml(cust.email)}</p>
+                            </div>
+                            <button class="btn-icon" onclick="deleteCustomer(${index})" title="刪除">🗑️</button>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        document.getElementById('customerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newCustomer = {
+                name: document.getElementById('newCustomerName').value,
+                email: document.getElementById('newCustomerEmail').value,
+                phone: document.getElementById('newCustomerPhone').value,
+                address: document.getElementById('newCustomerAddress').value
+            };
+            
+            customers.push(newCustomer);
+            localStorage.setItem('aicountant-customers', JSON.stringify(customers));
+            
+            renderCustomerList();
+            document.getElementById('customerForm').reset();
+            alert('客戶添加成功！');
+        });
+        
+        function deleteCustomer(index) {
+            if (!confirm('確定要刪除此客戶嗎？')) return;
+            customers.splice(index, 1);
+            localStorage.setItem('aicountant-customers', JSON.stringify(customers));
+            renderCustomerList();
+        }
+        
+        // Autocomplete customer in invoice form
+        document.getElementById('clientName').addEventListener('input', function() {
+            const value = this.value.toLowerCase();
+            const match = customers.find(c => c.name.toLowerCase().includes(value));
+            if (match && value.length > 2) {
+                document.getElementById('clientEmail').value = match.email;
+            }
+        });
+
+        // ============================================
+        // PDF EXPORT
+        // ============================================
+        
+        async function generatePDF(invoice) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Header
+            doc.setFontSize(24);
+            doc.text('發票', 150, 30);
+            
+            doc.setFontSize(12);
+            doc.text('AIcountant 智能會計平台', 20, 30);
+            doc.setFontSize(10);
+            doc.text('香港中環德輔道中100號', 20, 38);
+            doc.text('電話：+852 1234 5678', 20, 44);
+            doc.text('電郵：info@aicountant.com', 20, 50);
+            
+            // Invoice Info
+            doc.setFontSize(11);
+            doc.text(`發票編號：${invoice.invoice_number}`, 130, 65);
+            doc.text(`發票日期：${formatDate(invoice.issue_date)}`, 130, 72);
+            doc.text(`到期日：${formatDate(invoice.due_date)}`, 130, 79);
+            doc.text(`狀態：${getStatusLabel(invoice.status)}`, 130, 86);
+            
+            // Client Info
+            doc.setFontSize(12);
+            doc.text('發送至：', 20, 100);
+            doc.setFontSize(11);
+            doc.text(invoice.client_name, 20, 108);
+            if (invoice.client_email) {
+                doc.text(invoice.client_email, 20, 115);
+            }
+            
+            // Line Items Table
+            const tableData = [
+                ['描述', '數量', '單價', '金額'],
+                ['服務費用', '1', `HK$ ${parseFloat(invoice.subtotal).toLocaleString()}`, `HK$ ${parseFloat(invoice.subtotal).toLocaleString()}`]
+            ];
+            
+            doc.autoTable({
+                startY: 130,
+                head: [tableData[0]],
+                body: tableData.slice(1),
+                theme: 'grid',
+                headStyles: { fillColor: [240, 240, 240], textColor: 0 },
+                styles: { font: 'helvetica', fontSize: 10 }
+            });
+            
+            // Totals
+            const finalY = doc.lastAutoTable.finalY + 10;
+            doc.text(`小計：HK$ ${parseFloat(invoice.subtotal).toLocaleString()}`, 150, finalY, { align: 'right' });
+            
+            if (invoice.tax_amount > 0) {
+                doc.text(`稅額 (${invoice.tax_rate}%)：HK$ ${parseFloat(invoice.tax_amount).toLocaleString()}`, 150, finalY + 7, { align: 'right' });
+            }
+            
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text(`總計：HK$ ${parseFloat(invoice.total_amount).toLocaleString()}`, 150, finalY + 18, { align: 'right' });
+            
+            // Notes
+            if (invoice.notes) {
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'normal');
+                doc.text('備註：', 20, finalY + 35);
+                doc.text(invoice.notes, 20, finalY + 42);
+            }
+            
+            // Footer
+            doc.setFontSize(9);
+            doc.text('感謝您的業務！如有任何問題，請聯繫我們。', 105, 280, { align: 'center' });
+            
+            return doc;
+        }
+        
+        function downloadPDF() {
+            if (!currentPreviewInvoice) {
+                alert('請先選擇發票');
+                return;
+            }
+            
+            generatePDF(currentPreviewInvoice).then(doc => {
+                doc.save(`${currentPreviewInvoice.invoice_number}.pdf`);
+            });
+        }
+
+        // ============================================
+        // EMAIL INVOICE
+        // ============================================
+        
+        function showEmailModal(invoiceId) {
+            const invoice = currentInvoices.find(inv => inv.id === invoiceId);
+            if (!invoice) return;
+            
+            currentPreviewInvoice = invoice;
+            document.getElementById('emailRecipient').value = invoice.client_email || '';
+            document.getElementById('emailSubject').value = `發票 ${invoice.invoice_number} - ${invoice.client_name}`;
+            document.getElementById('emailBody').value = `尊敬的 ${invoice.client_name}，\n\n請查收附件的發票 ${invoice.invoice_number}。\n\n發票金額：HK$ ${parseFloat(invoice.total_amount).toLocaleString()}\n到期日：${formatDate(invoice.due_date)}\n\n如有任何問題，請隨時聯繫我們。\n\n謝謝！\nAIcountant 團隊`;
+            
+            document.getElementById('emailModal').classList.add('active');
+        }
+        
+        function closeEmailModal() {
+            document.getElementById('emailModal').classList.remove('active');
+        }
+        
+        document.getElementById('emailForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const recipient = document.getElementById('emailRecipient').value;
+            const subject = document.getElementById('emailSubject').value;
+            const body = document.getElementById('emailBody').value;
+            const attachPDF = document.getElementById('attachPDF').checked;
+            
+            // Generate mailto link
+            let mailtoLink = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            
+            if (attachPDF && currentPreviewInvoice) {
+                // In a real app, you would send the PDF via a backend service
+                // For now, we'll generate and download the PDF
+                const doc = await generatePDF(currentPreviewInvoice);
+                doc.save(`${currentPreviewInvoice.invoice_number}.pdf`);
+                alert('PDF 已下載。請將其附加到您的郵件中。\n\n即將打開您的郵件客戶端...');
+            }
+            
+            window.open(mailtoLink, '_blank');
+            closeEmailModal();
+        });
 
         // ============================================
         // HELPER FUNCTIONS

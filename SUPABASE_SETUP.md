@@ -75,12 +75,75 @@ This creates:
    - `https://aicountant-website.vercel.app/portal/login.html`
    - `http://localhost:5500/portal/login.html`
 
-### 3.2 Email Templates (Optional)
-1. Go to Authentication → Email Templates
-2. Customize confirmation emails if desired
-3. Or disable email confirmation for easier testing:
-   - Go to Authentication → Providers → Email
-   - Toggle OFF "Confirm email"
+### 3.2 Customize Confirmation Email (Important!)
+
+To show **AIcountant** company name in confirmation emails:
+
+1. Go to **Authentication** → **Email Templates**
+2. Click on **"Confirm Signup"** template
+3. Replace with this custom template:
+
+```html
+<h2>歡迎來到 AIcountant！</h2>
+
+<p>您好 {{ .Email }}，</p>
+
+<p>感謝您註冊 AIcountant 智能會計平台。請點擊下方按鈕確認您的電郵地址：</p>
+
+<p style="text-align: center; margin: 30px 0;">
+  <a href="{{ .ConfirmationURL }}" 
+     style="background: #000; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+    確認我的電郵地址
+  </a>
+</p>
+
+<p>或者複製以下連結到瀏覽器：</p>
+<p style="word-break: break-all; background: #f5f5f5; padding: 12px; border-radius: 4px;">
+  {{ .ConfirmationURL }}
+</p>
+
+<p>如果您沒有註冊 AIcountant 賬戶，請忽略此郵件。</p>
+
+<hr style="margin: 30px 0; border: none; border-top: 1px solid #e0e0e0;">
+<p style="color: #666; font-size: 12px;">
+  <strong>AIcountant 智能會計平台</strong><br>
+  讓您的財務管理更輕鬆<br>
+  <a href="https://aicountant-website.vercel.app">https://aicountant-website.vercel.app</a>
+</p>
+```
+
+4. Also customize **"Reset Password"** template similarly:
+
+```html
+<h2>重置您的 AIcountant 密碼</h2>
+
+<p>您好 {{ .Email }}，</p>
+
+<p>我們收到了重置您 AIcountant 賬戶密碼的請求。請點擊下方按鈕重置密碼：</p>
+
+<p style="text-align: center; margin: 30px 0;">
+  <a href="{{ .ConfirmationURL }}" 
+     style="background: #000; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+    重置密碼
+  </a>
+</p>
+
+<p>如果您沒有請求重置密碼，請忽略此郵件。</p>
+
+<hr style="margin: 30px 0; border: none; border-top: 1px solid #e0e0e0;">
+<p style="color: #666; font-size: 12px;">
+  <strong>AIcountant 智能會計平台</strong><br>
+  客服支援：<a href="mailto:support@aicountant.com">support@aicountant.com</a>
+</p>
+```
+
+5. Click **"Save"** after each template
+
+### 3.3 Disable Email Confirmation (For Testing Only)
+If you want to skip email verification during development:
+- Go to **Authentication** → **Providers** → **Email**
+- Toggle OFF **"Confirm email"**
+- **Remember to turn this ON for production!**
 
 ### 3.3 Rate Limiting
 1. Go to Authentication → Rate Limits
