@@ -558,3 +558,4 @@ onAuthStateChange((event, session) => {
 
 console.log('📦 Supabase client module loaded');
 console.log('   Make sure to update SUPABASE_URL and SUPABASE_ANON_KEY in this file');
+// Auto-deploy test: Thu Mar 12 23:25:53 HKT 2026
