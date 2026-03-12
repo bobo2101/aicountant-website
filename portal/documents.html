@@ -232,10 +232,25 @@
                 <p>上傳、掃描和管理您的財務文件</p>
             </header>
 
+            <!-- OCR Status Banner -->
+            <div id="ocrStatusBanner" style="display: none; background: #e3f2fd; border: 1px solid #bbdefb; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 20px;">🤖</span>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 500; color: #1565c0;">DeepSeek AI 正在分析文件...</div>
+                        <div style="font-size: 13px; color: #666;">自動識別金額、日期、供應商信息</div>
+                    </div>
+                    <div class="spinner" style="width: 20px; height: 20px; border: 2px solid #bbdefb; border-top-color: #1565c0; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                </div>
+            </div>
+            <style>
+                @keyframes spin { to { transform: rotate(360deg); } }
+            </style>
+
             <!-- Upload Section -->
             <div class="content-card" style="margin-bottom: 24px;">
                 <div class="card-header">
-                    <h3>上傳文件</h3>
+                    <h3>📤 上傳文件（支持 AI 識別）</h3>
                 </div>
                 <div class="card-body">
                     <div class="upload-zone" id="uploadZone">
@@ -292,10 +307,14 @@
                     </div>
                     <div class="card-body">
                         <div class="scan-preview">
-                            <div class="scan-preview-icon">📷</div>
-                            <div class="scan-preview-text">使用您的相機掃描文件<br>AI 將自動提取關鍵信息</div>
+                            <div class="scan-preview-icon">🤖</div>
+                            <div class="scan-preview-text">
+                                <strong>DeepSeek AI 智能識別</strong><br>
+                                上傳發票自動識別：金額、日期、供應商<br>
+                                <small style="color: #666;">準確率 85%+ | 成本僅 ¥0.005/張</small>
+                            </div>
                             <button class="btn btn-primary" id="scanBtn" style="width: 100%;" onclick="startScan()">
-                                開始掃描
+                                📷 拍照識別
                             </button>
                         </div>
                         
