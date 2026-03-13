@@ -1053,6 +1053,11 @@ body {
         box-shadow: var(--shadow);
     }
     
+    .lang-switcher {
+        order: -1;
+        margin-bottom: 12px;
+    }
+    
     .nav-links.active {
         display: flex;
     }
