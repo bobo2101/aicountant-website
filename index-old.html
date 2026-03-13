@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIcountant - 智能会计服务</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">AIcountant</div>
+            <ul class="nav-links">
+                <li><a href="#home" data-i18n="nav.home">首页</a></li>
+                <li><a href="#about" data-i18n="nav.about">关于我们</a></li>
+                <li><a href="#services" data-i18n="nav.services">服务</a></li>
+                <li><a href="resources.html" data-i18n="nav.resources">資源中心</a></li>
+                <li><a href="#contact" data-i18n="nav.contact">联系我们</a></li>
+                <li><a href="portal/login.html" style="background: #1a1a1a; color: white; padding: 8px 16px; border-radius: 6px;" data-i18n="nav.portal">客戶登入</a></li>
+            </ul>
+            <!-- 语言切换器 - 下拉式 -->
+            <div class="language-dropdown">
+                <button class="lang-current" id="langCurrent">
+                    <span class="lang-flag">🇺🇸</span>
+                    <span class="lang-name">English</span>
+                    <span class="lang-arrow">▼</span>
+                </button>
+                <div class="lang-options" id="langOptions">
+                    <button class="lang-option" data-lang="en">
+                        <span class="lang-flag">🇺🇸</span>
+                        <span class="lang-name">English</span>
+                    </button>
+                    <button class="lang-option" data-lang="zh">
+                        <span class="lang-flag">🇨🇳</span>
+                        <span class="lang-name">简体中文</span>
+                    </button>
+                    <button class="lang-option" data-lang="zh-TW">
+                        <span class="lang-flag">🇭🇰</span>
+                        <span class="lang-name">繁體中文</span>
+                    </button>
+                </div>
+            </div>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主视觉区域 -->
+    <section id="home" class="hero">
+        <div class="container">
+            <h1>Easy Hong Kong Company Formation, Guaranteed</h1>
+            <p>AIcountant provides professional company formation and accounting services for your Hong Kong business. Simple, fast, and guaranteed.</p>
+            <a href="#services" class="btn btn-primary" data-i18n="hero.cta">查看服务</a>
+        </div>
+    </section>
+
+    <!-- 信任徽章 -->
+    <section class="trust-badges">
+        <div class="container">
+            <div class="badges-grid">
+                <div class="badge">
+                    <span class="badge-icon">🤖</span>
+                    <span class="badge-text" data-i18n="badges.ai">7×24小时AI助手</span>
+                </div>
+                <div class="badge">
+                    <span class="badge-icon">💰</span>
+                    <span class="badge-text" data-i18n="badges.refund">30天不满意退款</span>
+                </div>
+                <div class="badge">
+                    <span class="badge-icon">🔒</span>
+                    <span class="badge-text" data-i18n="badges.security">银行级数据加密</span>
+                </div>
+                <div class="badge">
+                    <span class="badge-icon">✅</span>
+                    <span class="badge-text" data-i18n="badges.experts">注册会计师团队</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 服务流程 -->
+    <section class="process">
+        <div class="container">
+            <h2 class="section-title" data-i18n="process.title">简单三步，开始使用</h2>
+            <div class="process-steps">
+                <div class="step">
+                    <div class="step-number">01</div>
+                    <div class="step-icon">📞</div>
+                    <h3 data-i18n="process.step1.title">在线咨询</h3>
+                    <p data-i18n="process.step1.desc">预约免费咨询，了解您的需求</p>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-number">02</div>
+                    <div class="step-icon">📋</div>
+                    <h3 data-i18n="process.step2.title">方案定制</h3>
+                    <p data-i18n="process.step2.desc">为您量身定制服务方案</p>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-number">03</div>
+                    <div class="step-icon">🚀</div>
+                    <h3 data-i18n="process.step3.title">开始服务</h3>
+                    <p data-i18n="process.step3.desc">AI+专家全程为您服务</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 服务展示 - 6大核心服务 -->
+    <section id="services" class="services">
+        <div class="container">
+            <h2 class="section-title" data-i18n="services.title">全方位企业服务</h2>
+            <p class="section-subtitle" data-i18n="services.subtitle">从公司注册到财税审计，一站式解决您的所有需求</p>
+
+            <!-- 服务 1: 公司注册 -->
+            <div class="service-detail" id="company-setup">
+                <div class="service-header">
+                    <div class="service-icon-large">🏢</div>
+                    <div class="service-info">
+                        <h3 data-i18n="services.setup.title">公司注册</h3>
+                        <p data-i18n="services.setup.desc">快速、专业的公司注册服务，让您轻松开启创业之旅</p>
+                    </div>
+                </div>
+                <div class="pricing-cards">
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h4 data-i18n="pricing.basic">基础版</h4>
+                            <div class="price">
+                                <span class="currency">¥</span>
+                                <span class="amount">1,999</span>
+                                <span class="period" data-i18n="pricing.once">/一次性</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li data-i18n="services.setup.basic.1">公司名称核准</li>
+                            <li data-i18n="services.setup.basic.2">营业执照办理</li>
+                            <li data-i18n="services.setup.basic.3">公章刻制</li>
+                            <li data-i18n="services.setup.basic.4">基础咨询服务</li>
+                        </ul>
+                        <button class="btn btn-pricing" data-service="company-setup" data-plan="basic" data-i18n="pricing.select">选择方案</button>
+                    </div>
+                    <div class="pricing-card featured">
+                        <div class="pricing-badge" data-i18n="pricing.popular">推荐</div>
+                        <div class="pricing-header">
+                            <h4 data-i18n="pricing.standard">标准版</h4>
+                            <div class="price">
+                                <span class="currency">¥</span>
+                                <span class="amount">3,999</span>
+                                <span class="period" data-i18n="pricing.once">/一次性</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li data-i18n="services.setup.standard.1">包含基础版所有服务</li>
+                            <li data-i18n="services.setup.standard.2">银行开户指导</li>
+                            <li data-i18n="services.setup.standard.3">税务登记办理</li>
+                            <li data-i18n="services.setup.standard.4">首年记账服务</li>
+                        </ul>
+                        <button class="btn btn-pricing" data-service="company-setup" data-plan="standard" data-i18n="pricing.select">选择方案</button>
+                    </div>
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h4 data-i18n="pricing.premium">高级版</h4>
+                            <div class="price">
+                                <span class="currency">¥</span>
+                                <span class="amount">6,999</span>
+                                <span class="period" data-i18n="pricing.once">/一次性</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li data-i18n="services.setup.premium.1">包含标准版所有服务</li>
+                            <li data-i18n="services.setup.premium.2">注册地址提供</li>
+                            <li data-i18n="services.setup.premium.3">全套公司秘书服务</li>
+                            <li data-i18n="services.setup.premium.4">专属顾问1对1</li>
+                        </ul>
+                        <button class="btn btn-pricing" data-service="company-setup" data-plan="premium" data-i18n="pricing.select">选择方案</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 服务 2: 公司秘书 -->
+            <div class="service-detail" id="company-secretary">
+                <div class="service-header">
+                    <div class="service-icon-large">📋</div>
+                    <div class="service-info">
+                        <h3 data-i18n="services.secretary.title">公司秘书</h3>
+                        <p data-i18n="services.secretary.desc">专业公司秘书服务，确保您的企业合规运营</p>
+                    </div>
+                </div>
+                <div class="pricing-cards">
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h4 data-i18n="pricing.basic">基础版</h4>
+                            <div class="price">
+                                <span class="currency">¥</span>
+                                <span class="amount">199</span>
+                                <span class="period" data-i18n="pricing.month">/月</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li data-i18n="services.secretary.basic.1">法定文件存档</li>
+                            <li data-i18n="services.secretary.basic.2">年度申报提醒</li>
+                            <li data-i18n="services.secretary.basic.3">董事变更备案</li>
+                            <li data-i18n="services.secretary.basic.4">邮件通知服务</li>
+                        </ul>
+                        <button class="btn btn-pricing" data-service="company-secretary" data-plan="basic" data-i18n="pricing.select">选择方案</button>
+                    </div>
+                    <div class="pricing-card featured">
+                        <div class="pricing-badge" data-i18n="pricing.popular">推荐</div>
+                        <div class="pricing-header">
+                            <h4 data-i18n="pricing.standard">标准版</h4>
+                            <div class="price">
+                                <span class="currency">¥</span>
+                                <span class="amount">399</span>
+                                <span class="period" data-i18n="pricing.month">/月</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li data-i18n="services.secretary.standard.1">包含基础版所有服务</li>
+                            <li data-i18n="services.secretary.standard.2">年度股东大会安排</li>
+                            <li data-i18n="services.secretary.standard.3">会议记录起草</li>
+                            <li data-i18n="services.secretary.standard.4">股权变更处理</li>
+                        </ul>
+                        <button class="btn btn-pricing" data-service="company-secretary" data-plan="standard" data-i18n="pricing.select">选择方案</button>
+                    </div>
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h4 data-i18n="pricing.premium">高级版</h4>
+                            <div class="price">
+                                <span class="currency">¥</span>
+                                <span class="amount">699</span>
+                                <span class="period" data-i18n="pricing.month">/月</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li data-i18n="services.secretary.premium.1">包含标准版所有服务</li>
+                            <li data-i18n="services.secretary.premium.2">注册地址服务</li>
+                            <li data-i18n="services.secretary.premium.3">商务信函代收</li>
+                            <li data-i18n="services.secretary.premium.4">专属秘书顾问</li>
+                        </ul>
+                        <button class="btn btn-pricing" data-service="company-secretary" data-plan="premium" data-i18n="pricing.select">选择方案</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 服务 3: 记账服务 -->
+            <div class="service-detail" id="bookkeeping">
+                <div class="service-header">
+                    <div class="service-icon-large">📝</div>
+                    <div class="service-info">
+                        <h3 data-i18n="services.bookkeeping.title">记账服务</h3>
+                        <p data-i18n="services.bookkeeping.desc">智能化记账，让您的财务清晰透明</p>
+                    </div>
+                </div>
+                <div class="pricing-cards">
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h4 data-i18n="pricing.basic">基础版</h4>
+                            <div class="price">
+                                <span class="currency">¥</span>
+                                <span class="amount">299</span>
+                                <span class="period" data-i18n="pricing.month">/月</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li data-i18n="services.bookkeeping.basic.1">每月50笔以内</li>
+                            <li data-i18n="services.bookkeeping.basic.2">银行对账</li>
+                            <li data-i18n="services.bookkeeping.basic.3">基础报表</li>
+                            <li data-i18n="services.bookkeeping.basic.4">AI智能分类</li>
+                        </ul>
+                        <button class="btn btn-pricing" data-service="bookkeeping" data-plan="basic" data-i18n="pricing.select">选择方案</button>
+                    </div>
+                    <div class="pricing-card featured">
+                        <div class="pricing-badge" data-i18n="pricing.popular">推荐</div>
+                        <div class="pricing-header">
+                            <h4 data-i18n="pricing.standard">标准版</h4>
+                            <div class="price">
+                                <span class="currency">¥</span>
+                                <span class="amount">599</span>
+                                <span class="period" data-i18n="pricing.month">/月</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li data-i18n="services.bookkeeping.standard.1">每月200笔以内</li>
+                            <li data-i18n="services.bookkeeping.standard.2">应收应付管理</li>
+                            <li data-i18n="services.bookkeeping.standard.3">完整财务报表</li>
+                            <li data-i18n="services.bookkeeping.standard.4">专属会计师</li>
+                        </ul>
+                        <button class="btn btn-pricing" data-service="bookkeeping" data-plan="standard" data-i18n="pricing.select">选择方案</button>
+                    </div>
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h4 data-i18n="pricing.premium">高级版</h4>
+                            <div class="price">
+                                <span class="currency">¥</span>
+                                <span class="amount">999</span>
+                                <span class="period" data-i18n="pricing.month">/月</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li data-i18n="services.bookkeeping.premium.1">不限笔数</li>
+                            <li data-i18n="services.bookkeeping.premium.2">库存管理</li>
+                            <li data-i18n="services.bookkeeping.premium.3">多维度分析</li>
+                            <li data-i18n="services.bookkeeping.premium.4">CFO级顾问</li>
+                        </ul>
+                        <button class="btn btn-pricing" data-service="bookkeeping" data-plan="premium" data-i18n="pricing.select">选择方案</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 服务 4: 会计服务 -->
+            <div class="service-detail" id="accounting">
+                <div class="service-header">
+                    <div class="service-icon-large">📊</div>
+                    <div class="service-info">
+                        <h3 data-i18n="services.accounting.title">会计服务</h3>
+                        <p data-i18n="services.accounting.desc">专业会计团队，为您的企业保驾护航</p>
+                    </div>
+                </div>
+                <div class="pricing-cards">
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h4 data-i18n="pricing.basic">基础版</h4>
+                            <div class="price">
+                                <span class="currency">¥</span>
+                                <span class="amount">499</span>
+                                <span class="period" data-i18n="pricing.month">/月</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li data-i18n="services.accounting.basic.1">日常账务处理</li>
+                            <li data-i18n="services.accounting.basic.2">月度财务报表</li>
+                            <li data-i18n="services.accounting.basic.3">凭证整理归档</li>
+                            <li data-i18n="services.accounting.basic.4">在线咨询支持</li>
+                        </ul>
+                        <button class="btn btn-pricing" data-service="accounting" data-plan="basic" data-i18n="pricing.select">选择方案</button>
+                    </div>
+                    <div class="pricing-card featured">
+                        <div class="pricing-badge" data-i18n="pricing.popular">推荐</div>
+                        <div class="pricing-header">
+                            <h4 data-i18n="pricing.standard">标准版</h4>
+                            <div class="price">
+                                <span class="currency">¥</span>
+                                <span class="amount">899</span>
+                                <span class="period" data-i18n="pricing.month">/月</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li data-i18n="services.accounting.standard.1">包含基础版所有服务</li>
+                            <li data-i18n="services.accounting.standard.2">成本核算分析</li>
+                            <li data-i18n="services.accounting.standard.3">预算编制服务</li>
+                            <li data-i18n="services.accounting.standard.4">季度经营分析</li>
+                        </ul>
+                        <button class="btn btn-pricing" data-service="accounting" data-plan="standard" data-i18n="pricing.select">选择方案</button>
+                    </div>
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h4 data-i18n="pricing.premium">高级版</h4>
+                            <div class="price">
+                                <span class="currency">¥</span>
+                                <span class="amount">1,499</span>
+                                <span class="period" data-i18n="pricing.month">/月</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li data-i18n="services.accounting.premium.1">包含标准版所有服务</li>
+                            <li data-i18n="services.accounting.premium.2">财务预测建模</li>
+                            <li data-i18n="services.accounting.premium.3">内控体系建立</li>
+                            <li data-i18n="services.accounting.premium.4">高级财务顾问</li>
+                        </ul>
+                        <button class="btn btn-pricing" data-service="accounting" data-plan="premium" data-i18n="pricing.select">选择方案</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 服务 5: 审计服务 -->
+            <div class="service-detail" id="auditing">
+                <div class="service-header">
+                    <div class="service-icon-large">🔍</div>
+                    <div class="service-info">
+                        <h3 data-i18n="services.auditing.title">审计服务</h3>
+                        <p data-i18n="services.auditing.desc">独立、客观的审计服务，提升企业公信力</p>
+                    </div>
+                </div>
+                <div class="pricing-cards">
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h4 data-i18n="pricing.basic">基础版</h4>
+                            <div class="price">
+                                <span class="currency">¥</span>
+                                <span class="amount">5,999</span>
+                                <span class="period" data-i18n="pricing.once">/起</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li data-i18n="services.auditing.basic.1">内部审计</li>
+                            <li data-i18n="services.auditing.basic.2">财务报表审阅</li>
+                            <li data-i18n="services.auditing.basic.3">合规性检查</li>
+                            <li data-i18n="services.auditing.basic.4">审计报告</li>
+                        </ul>
+                        <button class="btn btn-pricing" data-service="auditing" data-plan="basic" data-i18n="pricing.select">选择方案</button>
+                    </div>
+                    <div class="pricing-card featured">
+                        <div class="pricing-badge" data-i18n="pricing.popular">推荐</div>
+                        <div class="pricing-header">
+                            <h4 data-i18n="pricing.standard">标准版</h4>
+                            <div class="price">
+                                <span class="currency">¥</span>
+                                <span class="amount">12,999</span>
+                                <span class="period" data-i18n="pricing.once">/起</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li data-i18n="services.auditing.standard.1">年度财务审计</li>
+                            <li data-i18n="services.auditing.standard.2">税务审计</li>
+                            <li data-i18n="services.auditing.standard.3">专项审计</li>
+                            <li data-i18n="services.auditing.standard.4">审计意见书</li>
+                        </ul>
+                        <button class="btn btn-pricing" data-service="auditing" data-plan="standard" data-i18n="pricing.select">选择方案</button>
+                    </div>
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h4 data-i18n="pricing.premium">高级版</h4>
+                            <div class="price">
+                                <span class="currency">¥</span>
+                                <span class="amount">面议</span>
+                                <span class="period"></span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li data-i18n="services.auditing.premium.1">IPO审计</li>
+                            <li data-i18n="services.auditing.premium.2">并购审计</li>
+                            <li data-i18n="services.auditing.premium.3">集团审计</li>
+                            <li data-i18n="services.auditing.premium.4">国际审计标准</li>
+                        </ul>
+                        <button class="btn btn-pricing" data-service="auditing" data-plan="premium" data-i18n="pricing.contact">联系我们</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 服务 6: 税务服务 -->
+            <div class="service-detail" id="taxation">
+                <div class="service-header">
+                    <div class="service-icon-large">💰</div>
+                    <div class="service-info">
+                        <h3 data-i18n="services.taxation.title">税务服务</h3>
+                        <p data-i18n="services.taxation.desc">专业税务规划，合法节税，合规申报</p>
+                    </div>
+                </div>
+                <div class="pricing-cards">
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h4 data-i18n="pricing.basic">基础版</h4>
+                            <div class="price">
+                                <span class="currency">¥</span>
+                                <span class="amount">399</span>
+                                <span class="period" data-i18n="pricing.month">/月</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li data-i18n="services.taxation.basic.1">月度纳税申报</li>
+                            <li data-i18n="services.taxation.basic.2">增值税申报</li>
+                            <li data-i18n="services.taxation.basic.3">个税申报</li>
+                            <li data-i18n="services.taxation.basic.4">税务提醒</li>
+                        </ul>
+                        <button class="btn btn-pricing" data-service="taxation" data-plan="basic" data-i18n="pricing.select">选择方案</button>
+                    </div>
+                    <div class="pricing-card featured">
+                        <div class="pricing-badge" data-i18n="pricing.popular">推荐</div>
+                        <div class="pricing-header">
+                            <h4 data-i18n="pricing.standard">标准版</h4>
+                            <div class="price">
+                                <span class="currency">¥</span>
+                                <span class="amount">799</span>
+                                <span class="period" data-i18n="pricing.month">/月</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li data-i18n="services.taxation.standard.1">包含基础版所有服务</li>
+                            <li data-i18n="services.taxation.standard.2">企业所得税申报</li>
+                            <li data-i18n="services.taxation.standard.3'>税务筹划建议</li>
+                            <li data-i18n="services.taxation.standard.4">税务风险诊断</li>
+                        </ul>
+                        <button class="btn btn-pricing" data-service="taxation" data-plan="basic" data-i18n="pricing.select">选择方案</button>
+                    </div>
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h4 data-i18n="pricing.premium">高级版</h4>
+                            <div class="price">
+                                <span class="currency">¥</span>
+                                <span class="amount">1,999</span>
+                                <span class="period" data-i18n="pricing.month">/月</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li data-i18n="services.taxation.premium.1">包含标准版所有服务</li>
+                            <li data-i18n="services.taxation.premium.2">跨境税务规划</li>
+                            <li data-i18n="services.taxation.premium.3">税收优惠申请</li>
+                            <li data-i18n="services.taxation.premium.4">税务稽查应对</li>
+                        </ul>
+                        <button class="btn btn-pricing" data-service="taxation" data-plan="premium" data-i18n="pricing.select">选择方案</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resources 專區 -->
+    <section id="resources" class="resources-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="resources.title">資源中心</h2>
+            <p class="section-subtitle" data-i18n="resources.subtitle">專業指南與常見問題，助力香港企業</p>
+
+            <!-- FAQ -->
+            <div class="resources-block">
+                <h3 class="resources-heading" data-i18n="resources.qa.title">常見問題</h3>
+                <div class="faq-container">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h4 data-i18n="resources.qa.q1">在香港註冊公司需要多長時間？</h4>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p data-i18n="resources.qa.a1">使用 AIcountant 服務，公司註冊通常只需 1-3 個工作日。我們的數字化流程與公司註冊處的緊密合作確保快速處理。收到所有所需文件後，我們通常可在 24 小時內完成註冊。</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h4 data-i18n="resources.qa.q2">註冊公司需要準備哪些文件？</h4>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p data-i18n="resources.qa.a2">香港公司註冊需要：(1) 所有董事及股東的護照或身份證副本，(2) 地址證明（最近 3 個月的水電費單或銀行對賬單），(3) 擬定的公司名稱，以及 (4) 業務性質描述。</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h4 data-i18n="resources.qa.q3">我需要在香港設立實體辦公室嗎？</h4>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p data-i18n="resources.qa.a3">是的，每家香港公司都必須有一個註冊辦公地址，但不需要是您實際工作的辦公室。AIcountant 提供註冊地址服務，月費低至 HK$199，既可滿足法律要求，又能讓您隨時隨地工作。</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h4 data-i18n="resources.qa.q6">香港公司需要繳納哪些稅項？</h4>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p data-i18n="resources.qa.a6">香港採用地域來源徵稅原則，稅率極具競爭力：利得稅（首 HK$200 萬利潤稅率 8.25%，其後 16.5%），無增值稅/消費稅，無資本增值稅，無股息稅，無股息預扣稅。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guides -->
+            <div class="resources-block">
+                <h3 class="resources-heading" data-i18n="resources.guides.title">實用指南</h3>
+                <div class="guides-grid">
+                    <div class="guide-card">
+                        <div class="guide-icon">📘</div>
+                        <div class="guide-content">
+                            <h4 data-i18n="resources.guides.g1.title">香港公司註冊完整指南</h4>
+                            <p data-i18n="resources.guides.g1.desc">從選擇公司名稱到完成商業登記的逐步指南，助您輕鬆創業。</p>
+                            <span class="guide-tag" data-i18n="resources.comingSoon">即將推出</span>
+                        </div>
+                    </div>
+                    <div class="guide-card">
+                        <div class="guide-icon">📊</div>
+                        <div class="guide-content">
+                            <h4 data-i18n="resources.guides.g2.title">初創企業稅務規劃攻略</h4>
+                            <p data-i18n="resources.guides.g2.desc">香港新企業必備的稅務策略，學習如何合法優化稅務安排。</p>
+                            <span class="guide-tag" data-i18n="resources.comingSoon">即將推出</span>
+                        </div>
+                    </div>
+                    <div class="guide-card">
+                        <div class="guide-icon">📋</div>
+                        <div class="guide-content">
+                            <h4 data-i18n="resources.guides.g3.title">年度合規檢查清單</h4>
+                            <p data-i18n="resources.guides.g3.desc">香港公司年度申報要求與截止日期的完整清單。</p>
+                            <span class="guide-tag" data-i18n="resources.comingSoon">即將推出</span>
+                        </div>
+                    </div>
+                    <div class="guide-card">
+                        <div class="guide-icon">💼</div>
+                        <div class="guide-content">
+                            <h4 data-i18n="resources.guides.g4.title">開立商業銀行戶口攻略</h4>
+                            <p data-i18n="resources.guides.g4.desc">成功開立香港企業銀行戶口的實用技巧，包括所需文件與常見挑戰。</p>
+                            <span class="guide-tag" data-i18n="resources.comingSoon">即將推出</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blog -->
+            <div class="resources-block">
+                <h3 class="resources-heading" data-i18n="resources.blog.title">最新資訊</h3>
+                <div class="blog-grid">
+                    <article class="blog-card">
+                        <div class="blog-image">🚀</div>
+                        <div class="blog-content">
+                            <span class="blog-category" data-i18n="resources.blog.category1">創業錦囊</span>
+                            <h4 data-i18n="resources.blog.b1.title">香港創業的 5 個常見錯誤</h4>
+                            <p data-i18n="resources.blog.b1.desc">許多新創業者在香港開公司時遇到的陷阱，從真實案例學習如何避免...</p>
+                            <span class="blog-date" data-i18n="resources.blog.b1.date">2024年3月</span>
+                        </div>
+                    </article>
+                    <article class="blog-card">
+                        <div class="blog-image">💡</div>
+                        <div class="blog-content">
+                            <span class="blog-category" data-i18n="resources.blog.category2">稅務知識</span>
+                            <h4 data-i18n="resources.blog.b2.title">2024 香港稅務更新</h4>
+                            <p data-i18n="resources.blog.b2.desc">香港稅務法規的最新變化及其對您業務的影響，附實用合規建議...</p>
+                            <span class="blog-date" data-i18n="resources.blog.b2.date">2024年2月</span>
+                        </div>
+                    </article>
+                    <article class="blog-card">
+                        <div class="blog-image">🌐</div>
+                        <div class="blog-content">
+                            <span class="blog-category" data-i18n="resources.blog.category3">商業策略</span>
+                            <h4 data-i18n="resources.blog.b3.title">為何外國創業者選擇香港</h4>
+                            <p data-i18n="resources.blog.b3.desc">探討在香港註冊公司的戰略優勢：從稅務優惠到國際銀行服務...</p>
+                            <span class="blog-date" data-i18n="resources.blog.b3.date">2024年1月</span>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 公司介绍 -->
+    <section id="about" class="about">
+        <div class="container">
+            <h2 class="section-title" data-i18n="about.title">关于 AIcountant</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <h3 data-i18n="about.whoWeAre">我们是谁</h3>
+                    <p data-i18n="about.whoWeAreDesc">AIcountant 是一家融合人工智能技术的现代会计服务公司，拥有超过10年的行业经验。我们的团队由专业会计师和AI技术专家组成，致力于为客户提供智能化的财务管理服务。</p>
+                    <h3 data-i18n="about.mission">我们的使命</h3>
+                    <p data-i18n="about.missionDesc">通过AI技术革新传统会计服务，帮助企业实现财务自动化，降低成本，提高效率，让企业管理更轻松。</p>
+                </div>
+                <div class="about-stats">
+                    <div class="stat">
+                        <span class="stat-number">500+</span>
+                        <span class="stat-label" data-i18n="stats.clients">服务企业</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">10+</span>
+                        <span class="stat-label" data-i18n="stats.experience">年行业经验</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">50+</span>
+                        <span class="stat-label" data-i18n="stats.team">专业团队</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 客户评价 -->
+    <section class="testimonials">
+        <div class="container">
+            <h2 class="section-title" data-i18n="testimonials.title">客户好评</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="stars">★★★★★</div>
+                        <p data-i18n="testimonials.1.content">"用了AIcountant后，每个月的记账报税再也不头疼了。AI助手响应很快，有问题随时能解答。"</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">👤</div>
+                        <div class="author-info">
+                            <span class="author-name" data-i18n="testimonials.1.name">张先生</span>
+                            <span class="author-title" data-i18n="testimonials.1.title">某科技公司创始人</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="stars">★★★★★</div>
+                        <p data-i18n="testimonials.2.content">"作为外资企业，中国的税务规定很复杂。AIcountant的团队非常专业，帮我们解决了很多问题。"</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">👤</div>
+                        <div class="author-info">
+                            <span class="author-name" data-i18n="testimonials.2.name">Sarah Chen</span>
+                            <span class="author-title" data-i18n="testimonials.2.title">外资企业CFO</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="stars">★★★★★</div>
+                        <p data-i18n="testimonials.3.content">"从公司注册到日常记账，一站式服务非常方便。价格透明，没有隐藏费用。"</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">👤</div>
+                        <div class="author-info">
+                            <span class="author-name" data-i18n="testimonials.3.name">李女士</span>
+                            <span class="author-title" data-i18n="testimonials.3.title">电商创业者</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 联系我们 -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title" data-i18n="contact.title">联系我们</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3 data-i18n="contact.subtitle">获取免费咨询</h3>
+                    <p data-i18n="contact.desc">留下您的联系方式，我们的专家将在24小时内与您联系</p>
+                    <div class="contact-item">
+                        <span class="contact-icon">📍</span>
+                        <span data-i18n="contact.address">北京市朝阳区建国路88号</span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">📞</span>
+                        <span>400-123-4567</span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">✉️</span>
+                        <span>contact@aicountant.com</span>
+                    </div>
+                </div>
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <label for="name" data-i18n="form.name">姓名</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email" data-i18n="form.email">邮箱</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone" data-i18n="form.phone">电话</label>
+                        <input type="tel" id="phone" name="phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="service" data-i18n="form.service">感兴趣的服务</label>
+                        <select id="service" name="service">
+                            <option value="" data-i18n="form.service.placeholder">请选择...</option>
+                            <option value="startup" data-i18n="form.service.startup">创业起步套餐</option>
+                            <option value="operations" data-i18n="form.service.operations">日常运营服务</option>
+                            <option value="growth" data-i18n="form.service.growth">企业升级方案</option>
+                            <option value="other" data-i18n="form.service.other">其他咨询</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="message" data-i18n="form.message">留言</label>
+                        <textarea id="message" name="message" rows="4"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" data-i18n="form.submit">提交咨询</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 AIcountant. <span data-i18n="footer.rights">版权所有</span></p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <!-- Stripe Payment -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="js/payment.js"></script>
+</body>
+</html>
+<!-- Force update: Wed Mar 11 15:23:39 HKT 2026 -->
+<!-- Deployed: Thu Mar 12 23:14:07 HKT 2026 -->
