@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="css/style-new.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- 导航栏 -->
@@ -19,15 +19,20 @@
                 <span class="logo-text">countant</span>
             </a>
             <ul class="nav-links">
-                <li><a href="#home">首页</a></li>
-                <li><a href="#process">注册流程</a></li>
-                <li><a href="#services">服务项目</a></li>
-                <li><a href="#why-us">为何选择我们</a></li>
-                <li><a href="#contact">联系我们</a></li>
+                <li><a href="#home" data-i18n="nav.home">首页</a></li>
+                <li><a href="#process" data-i18n="nav.process">注册流程</a></li>
+                <li><a href="#services" data-i18n="nav.services">服务项目</a></li>
+                <li><a href="#why-us" data-i18n="nav.why">为何选择我们</a></li>
+                <li><a href="#contact" data-i18n="nav.contact">联系我们</a></li>
             </ul>
             <div class="nav-actions">
-                <a href="portal/login.html" class="btn btn-outline">客户登入</a>
-                <button class="btn btn-primary" onclick="openConsultModal()">免费咨询</button>
+                <div class="lang-switcher">
+                    <button class="lang-btn active" onclick="switchLang('zh')">简</button>
+                    <button class="lang-btn" onclick="switchLang('zh-TW')">繁</button>
+                    <button class="lang-btn" onclick="switchLang('en')">EN</button>
+                </div>
+                <a href="portal/login.html" class="btn btn-outline" data-i18n="nav.login">客户登入</a>
+                <button class="btn btn-primary" onclick="openConsultModal()" data-i18n="nav.consult">免费咨询</button>
             </div>
             <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
                 <span></span>
@@ -47,41 +52,35 @@
             <div class="hero-content">
                 <div class="hero-badge">
                     <span class="badge-icon">🇭🇰</span>
-                    <span>香港本地专业团队</span>
+                    <span data-i18n="hero.badge">香港本地专业团队</span>
                 </div>
-                <h1 class="hero-title">
-                    香港公司注册<br>
-                    <span class="highlight">一站式服务</span>
-                </h1>
-                <p class="hero-subtitle">
-                    从公司注册到银行开户，从年审报税到秘书服务<br>
-                    香港本地团队，3天快速办理，全程无忧
-                </p>
+                <h1 class="hero-title" data-i18n="hero.title">香港公司注册<br><span class="highlight">一站式服务</span></h1>
+                <p class="hero-subtitle" data-i18n="hero.subtitle">从公司注册到银行开户，从年审报税到秘书服务<br>香港本地团队，3天快速办理，全程无忧</p>
                 <div class="hero-stats">
                     <div class="stat-item">
                         <div class="stat-number">500+</div>
-                        <div class="stat-label">成功注册</div>
+                        <div class="stat-label" data-i18n="stats.companies">成功注册</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-number">3天</div>
-                        <div class="stat-label">最快办理</div>
+                        <div class="stat-label" data-i18n="stats.speed">最快办理</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-number">100%</div>
-                        <div class="stat-label">成功率</div>
+                        <div class="stat-label" data-i18n="stats.success">成功率</div>
                     </div>
                 </div>
                 <div class="hero-cta">
                     <button class="btn btn-primary btn-large" onclick="openConsultModal()">
-                        <span>免费获取报价</span>
+                        <span data-i18n="hero.cta.primary">免费获取报价</span>
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </button>
-                    <a href="#process" class="btn btn-outline btn-large">了解流程</a>
+                    <a href="#process" class="btn btn-outline btn-large" data-i18n="hero.cta.secondary">了解流程</a>
                 </div>
                 <div class="hero-trust">
-                    <div class="trust-text">深受初创企业与个人信赖</div>
+                    <div class="trust-text" data-i18n="trust.text">深受初创企业与个人信赖</div>
                     <div class="trust-logos">
                         <span class="trust-badge">🏢 初创企业</span>
                         <span class="trust-badge">👤 个人创业</span>
@@ -96,9 +95,9 @@
     <section id="process" class="process-section">
         <div class="container">
             <div class="section-header">
-                <span class="section-tag">简单四步</span>
-                <h2 class="section-title">香港公司注册流程</h2>
-                <p class="section-desc">香港本地团队全程跟进，让您轻松开启商业之旅</p>
+                <span class="section-tag" data-i18n="process.title">简单四步</span>
+                <h2 class="section-title" data-i18n="process.subtitle">香港公司注册流程</h2>
+                <p class="section-desc" data-i18n="process.desc">香港本地团队全程跟进，让您轻松开启商业之旅</p>
             </div>
             <div class="process-grid">
                 <div class="process-card">
@@ -108,8 +107,8 @@
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                         </svg>
                     </div>
-                    <h3>免费咨询</h3>
-                    <p>了解您的需求，评估最佳方案，解答所有疑问</p>
+                    <h3 data-i18n="process.step1.title">免费咨询</h3>
+                    <p data-i18n="process.step1.desc">了解您的需求，评估最佳方案，解答所有疑问</p>
                     <span class="process-time">1天</span>
                 </div>
                 <div class="process-arrow">→</div>
@@ -124,8 +123,8 @@
                             <polyline points="10 9 9 9 8 9"/>
                         </svg>
                     </div>
-                    <h3>准备文件</h3>
-                    <p>指导准备所需文件，公司名称查册，确认注册地址</p>
+                    <h3 data-i18n="process.step2.title">准备文件</h3>
+                    <p data-i18n="process.step2.desc">指导准备所需文件，公司名称查册，确认注册地址</p>
                     <span class="process-time">1-2天</span>
                 </div>
                 <div class="process-arrow">→</div>
@@ -137,8 +136,8 @@
                             <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                         </svg>
                     </div>
-                    <h3>提交注册</h3>
-                    <p>递交政府申请，跟踪审批进度，领取公司证书</p>
+                    <h3 data-i18n="process.step3.title">提交注册</h3>
+                    <p data-i18n="process.step3.desc">递交政府申请，跟踪审批进度，领取公司证书</p>
                     <span class="process-time">3-5天</span>
                 </div>
                 <div class="process-arrow">→</div>
@@ -150,8 +149,8 @@
                             <polyline points="12 6 12 12 16 14"/>
                         </svg>
                     </div>
-                    <h3>后续服务</h3>
-                    <p>银行开户协助，年审报税提醒，秘书服务支持</p>
+                    <h3 data-i18n="process.step4.title">后续服务</h3>
+                    <p data-i18n="process.step4.desc">银行开户协助，年审报税提醒，秘书服务支持</p>
                     <span class="process-time">持续</span>
                 </div>
             </div>
@@ -162,9 +161,9 @@
     <section id="services" class="services-section">
         <div class="container">
             <div class="section-header">
-                <span class="section-tag">全方位服务</span>
-                <h2 class="section-title">一站式企业解决方案</h2>
-                <p class="section-desc">从公司成立到日常运营，我们全程陪伴</p>
+                <span class="section-tag" data-i18n="services.title">全方位服务</span>
+                <h2 class="section-title" data-i18n="services.subtitle">一站式企业解决方案</h2>
+                <p class="section-desc" data-i18n="services.desc">从公司成立到日常运营，我们全程陪伴</p>
             </div>
             <div class="services-grid">
                 <div class="service-card">
@@ -174,9 +173,9 @@
                             <polyline points="9 22 9 12 15 12 15 22"/>
                         </svg>
                     </div>
-                    <h3>公司注册</h3>
-                    <p>有限公司注册、公司名称查册、注册地址提供、公司章程定制</p>
-                    <a href="#" class="service-link">了解详情 →</a>
+                    <h3 data-i18n="service.setup">公司注册</h3>
+                    <p data-i18n="service.setup.desc">有限公司注册、公司名称查册、注册地址提供、公司章程定制</p>
+                    <a href="#" class="service-link" data-i18n="service.learnmore">了解详情 →</a>
                 </div>
                 <div class="service-card">
                     <div class="service-icon">
@@ -185,9 +184,9 @@
                             <line x1="2" y1="10" x2="22" y2="10"/>
                         </svg>
                     </div>
-                    <h3>银行开户</h3>
-                    <p>香港银行开户指导、开户文件准备、银行预约安排、远程开户协助</p>
-                    <a href="#" class="service-link">了解详情 →</a>
+                    <h3 data-i18n="service.bank">银行开户</h3>
+                    <p data-i18n="service.bank.desc">香港银行开户指导、开户文件准备、银行预约安排、远程开户协助</p>
+                    <a href="#" class="service-link" data-i18n="service.learnmore">了解详情 →</a>
                 </div>
                 <div class="service-card">
                     <div class="service-icon">
@@ -195,9 +194,9 @@
                             <path d="M12 2v20M2 12h20"/>
                         </svg>
                     </div>
-                    <h3>年审报税</h3>
-                    <p>周年申报、利得税申报、审计报告、税务筹划建议</p>
-                    <a href="#" class="service-link">了解详情 →</a>
+                    <h3 data-i18n="service.tax">年审报税</h3>
+                    <p data-i18n="service.tax.desc">周年申报、利得税申报、审计报告、税务筹划建议</p>
+                    <a href="#" class="service-link" data-i18n="service.learnmore">了解详情 →</a>
                 </div>
                 <div class="service-card">
                     <div class="service-icon">
@@ -207,9 +206,9 @@
                             <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
                         </svg>
                     </div>
-                    <h3>秘书服务</h3>
-                    <p>公司秘书委任、重要控制人备案、SCR登记、董事变更服务</p>
-                    <a href="#" class="service-link">了解详情 →</a>
+                    <h3 data-i18n="service.secretary">秘书服务</h3>
+                    <p data-i18n="service.secretary.desc">公司秘书委任、重要控制人备案、SCR登记、董事变更服务</p>
+                    <a href="#" class="service-link" data-i18n="service.learnmore">了解详情 →</a>
                 </div>
             </div>
         </div>
@@ -220,36 +219,36 @@
         <div class="container">
             <div class="why-us-grid">
                 <div class="why-us-content">
-                    <span class="section-tag">为何选择我们</span>
-                    <h2 class="section-title">香港本地团队<br>专业值得信赖</h2>
-                    <p class="section-desc">我们深谙香港商业环境与法规，为您的企业提供最专业的本地化服务</p>
+                    <span class="section-tag" data-i18n="why.title">为何选择我们</span>
+                    <h2 class="section-title" data-i18n="why.subtitle">香港本地团队<br>专业值得信赖</h2>
+                    <p class="section-desc" data-i18n="why.desc">我们深谙香港商业环境与法规，为您的企业提供最专业的本地化服务</p>
                     <div class="features-list">
                         <div class="feature-item">
                             <div class="feature-icon">✓</div>
                             <div class="feature-text">
-                                <h4>香港本地专业团队</h4>
-                                <p>熟悉香港法规，沟通无障碍，响应更及时</p>
+                                <h4 data-i18n="feature.local">香港本地专业团队</h4>
+                                <p data-i18n="feature.local.desc">熟悉香港法规，沟通无障碍，响应更及时</p>
                             </div>
                         </div>
                         <div class="feature-item">
                             <div class="feature-icon">✓</div>
                             <div class="feature-text">
-                                <h4>3天快速办理</h4>
-                                <p>高效流程，加急服务可选，快速开启业务</p>
+                                <h4 data-i18n="feature.speed">3天快速办理</h4>
+                                <p data-i18n="feature.speed.desc">高效流程，加急服务可选，快速开启业务</p>
                             </div>
                         </div>
                         <div class="feature-item">
                             <div class="feature-icon">✓</div>
                             <div class="feature-text">
-                                <h4>一站式全包服务</h4>
-                                <p>注册+开户+年审+报税，全程无忧托管</p>
+                                <h4 data-i18n="feature.onestop">一站式全包服务</h4>
+                                <p data-i18n="feature.onestop.desc">注册+开户+年审+报税，全程无忧托管</p>
                             </div>
                         </div>
                         <div class="feature-item">
                             <div class="feature-icon">✓</div>
                             <div class="feature-text">
-                                <h4>透明合理收费</h4>
-                                <p>无隐藏费用，价格透明，性价比更高</p>
+                                <h4 data-i18n="feature.price">透明合理收费</h4>
+                                <p data-i18n="feature.price.desc">无隐藏费用，价格透明，性价比更高</p>
                             </div>
                         </div>
                     </div>
@@ -269,15 +268,15 @@
     <section class="cta-section">
         <div class="container">
             <div class="cta-content">
-                <h2>准备好开启您的香港业务了吗？</h2>
-                <p>立即免费咨询，获取专属方案与报价</p>
+                <h2 data-i18n="cta.title">准备好开启您的香港业务了吗？</h2>
+                <p data-i18n="cta.desc">立即免费咨询，获取专属方案与报价</p>
                 <button class="btn btn-primary btn-large" onclick="openConsultModal()">
                     免费获取报价
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M5 12h14M12 5l7 7-7 7"/>
                     </svg>
                 </button>
-                <p class="cta-note">免费咨询 · 无隐藏费用 · 快速响应</p>
+                <p class="cta-note" data-i18n="cta.note">免费咨询 · 无隐藏费用 · 快速响应</p>
             </div>
         </div>
     </section>
@@ -404,6 +403,204 @@
     </div>
 
     <script>
+        // Multi-language translations
+        const translations = {
+            'zh': {
+                'nav.home': '首页',
+                'nav.process': '注册流程',
+                'nav.services': '服务项目',
+                'nav.why': '为何选择我们',
+                'nav.contact': '联系我们',
+                'nav.login': '客户登入',
+                'nav.consult': '免费咨询',
+                'hero.badge': '香港本地专业团队',
+                'hero.title': '香港公司注册<br><span class="highlight">一站式服务</span>',
+                'hero.subtitle': '从公司注册到银行开户，从年审报税到秘书服务<br>香港本地团队，3天快速办理，全程无忧',
+                'stats.companies': '成功注册',
+                'stats.speed': '最快办理',
+                'stats.success': '成功率',
+                'hero.cta.primary': '免费获取报价',
+                'hero.cta.secondary': '了解流程',
+                'trust.text': '深受初创企业与个人信赖',
+                'process.title': '简单四步',
+                'process.subtitle': '香港公司注册流程',
+                'process.desc': '香港本地团队全程跟进，让您轻松开启商业之旅',
+                'process.step1.title': '免费咨询',
+                'process.step1.desc': '了解您的需求，评估最佳方案，解答所有疑问',
+                'process.step2.title': '准备文件',
+                'process.step2.desc': '指导准备所需文件，公司名称查册，确认注册地址',
+                'process.step3.title': '提交注册',
+                'process.step3.desc': '递交政府申请，跟踪审批进度，领取公司证书',
+                'process.step4.title': '后续服务',
+                'process.step4.desc': '银行开户协助，年审报税提醒，秘书服务支持',
+                'services.title': '全方位服务',
+                'services.subtitle': '一站式企业解决方案',
+                'services.desc': '从公司成立到日常运营，我们全程陪伴',
+                'service.setup': '公司注册',
+                'service.setup.desc': '有限公司注册、公司名称查册、注册地址提供、公司章程定制',
+                'service.learnmore': '了解详情 →',
+                'service.bank': '银行开户',
+                'service.bank.desc': '香港银行开户指导、开户文件准备、银行预约安排、远程开户协助',
+                'service.tax': '年审报税',
+                'service.tax.desc': '周年申报、利得税申报、审计报告、税务筹划建议',
+                'service.secretary': '秘书服务',
+                'service.secretary.desc': '公司秘书委任、重要控制人备案、SCR登记、董事变更服务',
+                'service.learnmore': '了解詳情 →',
+                'why.title': '为何选择我们',
+                'why.subtitle': '香港本地团队 专业值得信赖',
+                'why.desc': '我们深谙香港商业环境与法规，为您的企业提供最专业的本地化服务',
+                'feature.local': '香港本地专业团队',
+                'feature.local.desc': '熟悉香港法规，沟通无障碍，响应更及时',
+                'feature.speed': '3天快速办理',
+                'feature.speed.desc': '高效流程，加急服务可选，快速开启业务',
+                'feature.onestop': '一站式全包服务',
+                'feature.onestop.desc': '注册+开户+年审+报税，全程无忧托管',
+                'feature.price': '透明合理收费',
+                'feature.price.desc': '无隐藏费用，价格透明，性价比更高',
+                'cta.title': '准备好开启您的香港业务了吗？',
+                'cta.desc': '立即免费咨询，获取专属方案与报价',
+                'cta.note': '免费咨询 · 无隐藏费用 · 快速响应'
+            },
+            'zh-TW': {
+                'nav.home': '首頁',
+                'nav.process': '註冊流程',
+                'nav.services': '服務項目',
+                'nav.why': '為何選擇我們',
+                'nav.contact': '聯繫我們',
+                'nav.login': '客戶登入',
+                'nav.consult': '免費咨詢',
+                'hero.badge': '香港本地專業團隊',
+                'hero.title': '香港公司註冊<br><span class="highlight">一站式服務</span>',
+                'hero.subtitle': '從公司註冊到銀行開戶，從年審報稅到秘書服務<br>香港本地團隊，3天快速辦理，全程無憂',
+                'stats.companies': '成功註冊',
+                'stats.speed': '最快辦理',
+                'stats.success': '成功率',
+                'hero.cta.primary': '免費獲取報價',
+                'hero.cta.secondary': '了解流程',
+                'trust.text': '深受初創企業與個人信賴',
+                'process.title': '簡單四步',
+                'process.subtitle': '香港公司註冊流程',
+                'process.desc': '香港本地團隊全程跟進，讓您輕鬆開啟商業之旅',
+                'process.step1.title': '免費咨詢',
+                'process.step1.desc': '了解您的需求，評估最佳方案，解答所有疑問',
+                'process.step2.title': '準備文件',
+                'process.step2.desc': '指導準備所需文件，公司名稱查冊，確認註冊地址',
+                'process.step3.title': '提交註冊',
+                'process.step3.desc': '遞交政府申請，跟蹤審批進度，領取公司證書',
+                'process.step4.title': '後續服務',
+                'process.step4.desc': '銀行開戶協助，年審報稅提醒，秘書服務支持',
+                'services.title': '全方位服務',
+                'services.subtitle': '一站式企業解決方案',
+                'services.desc': '從公司成立到日常運營，我們全程陪伴',
+                'service.setup': '公司註冊',
+                'service.setup.desc': '有限公司註冊、公司名稱查冊、註冊地址提供、公司章程定制',
+                'service.bank': '銀行開戶',
+                'service.bank.desc': '香港銀行開戶指導、開戶文件準備、銀行預約安排、遠程開戶協助',
+                'service.tax': '年審報稅',
+                'service.tax.desc': '週年申報、利得稅申報、審計報告、稅務籌劃建議',
+                'service.secretary': '秘書服務',
+                'service.secretary.desc': '公司秘書委任、重要控製人備案、SCR登記、董事變更服務',
+                'service.learnmore': '了解詳情 →',
+                'why.title': '為何選擇我們',
+                'why.subtitle': '香港本地團隊 專業值得信賴',
+                'why.desc': '我們深谙香港商業環境與法規，為您的企業提供最專業的本地化服務',
+                'feature.local': '香港本地專業團隊',
+                'feature.local.desc': '熟悉香港法規，溝通無障礙，響應更及時',
+                'feature.speed': '3天快速辦理',
+                'feature.speed.desc': '高效流程，加急服務可選，快速開啟業務',
+                'feature.onestop': '一站式全包服務',
+                'feature.onestop.desc': '註冊+開戶+年審+報稅，全程無憂托管',
+                'feature.price': '透明合理收費',
+                'feature.price.desc': '無隱藏費用，價格透明，性價比更高',
+                'cta.title': '準備好開啟您的香港業務了嗎？',
+                'cta.desc': '立即免費咨詢，獲取專屬方案與報價',
+                'cta.note': '免費咨詢 · 無隱藏費用 · 快速響應'
+            },
+            'en': {
+                'nav.home': 'Home',
+                'nav.process': 'Process',
+                'nav.services': 'Services',
+                'nav.why': 'Why Us',
+                'nav.contact': 'Contact',
+                'nav.login': 'Client Login',
+                'nav.consult': 'Free Consultation',
+                'hero.badge': 'Hong Kong Local Team',
+                'hero.title': 'Hong Kong Company Formation<br><span class="highlight">One-Stop Service</span>',
+                'hero.subtitle': 'From company registration to bank account opening, from annual compliance to tax filing<br>Hong Kong local team, 3-day fast processing, worry-free experience',
+                'stats.companies': 'Companies Registered',
+                'stats.speed': 'Fastest Processing',
+                'stats.success': 'Success Rate',
+                'hero.cta.primary': 'Get Free Quote',
+                'hero.cta.secondary': 'Learn Process',
+                'trust.text': 'Trusted by startups and entrepreneurs',
+                'process.title': 'Simple 4 Steps',
+                'process.subtitle': 'Hong Kong Company Formation Process',
+                'process.desc': 'Hong Kong local team guiding you through, making your business journey easy',
+                'process.step1.title': 'Free Consultation',
+                'process.step1.desc': 'Understand your needs, evaluate best solutions, answer all questions',
+                'process.step2.title': 'Prepare Documents',
+                'process.step2.desc': 'Guide document preparation, company name search, confirm registered address',
+                'process.step3.title': 'Submit Registration',
+                'process.step3.desc': 'Submit government application, track approval progress, obtain company certificate',
+                'process.step4.title': 'Ongoing Services',
+                'process.step4.desc': 'Bank account assistance, annual compliance reminders, company secretary support',
+                'services.title': 'Comprehensive Services',
+                'services.subtitle': 'One-Stop Business Solution',
+                'services.desc': 'From company incorporation to daily operations, we accompany you throughout',
+                'service.setup': 'Company Registration',
+                'service.setup.desc': 'Limited company setup, name search, registered address, articles of association',
+                'service.bank': 'Bank Account Opening',
+                'service.bank.desc': 'HK bank account guidance, document preparation, bank appointment arrangement',
+                'service.tax': 'Annual Compliance & Tax',
+                'service.tax.desc': 'Annual return filing, profits tax filing, audit report, tax planning advice',
+                'service.secretary': 'Company Secretary',
+                'service.secretary.desc': 'Company secretary appointment, significant controller filing, SCR registration',
+                'service.learnmore': 'Learn More →',
+                'why.title': 'Why Choose Us',
+                'why.subtitle': 'Hong Kong Local Team You Can Trust',
+                'why.desc': 'We understand Hong Kong business environment and regulations, providing professional localized services',
+                'feature.local': 'Hong Kong Local Professional Team',
+                'feature.local.desc': 'Familiar with HK regulations, seamless communication, responsive support',
+                'feature.speed': '3-Day Fast Processing',
+                'feature.speed.desc': 'Efficient process, express service available, quick business launch',
+                'feature.onestop': 'One-Stop All-Inclusive Service',
+                'feature.onestop.desc': 'Registration + Banking + Compliance + Tax, fully managed worry-free',
+                'feature.price': 'Transparent & Reasonable Pricing',
+                'feature.price.desc': 'No hidden fees, transparent pricing, great value for money',
+                'cta.title': 'Ready to Start Your Hong Kong Business?',
+                'cta.desc': 'Get free consultation now for customized solutions and quote',
+                'cta.note': 'Free Consultation · No Hidden Fees · Quick Response'
+            }
+        };
+
+        let currentLang = 'zh';
+
+        function switchLang(lang) {
+            currentLang = lang;
+            
+            // Update active button
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update all elements with data-i18n
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    const translation = translations[lang][key];
+                    if (translation.includes('<')) {
+                        el.innerHTML = translation;
+                    } else {
+                        el.textContent = translation;
+                    }
+                }
+            });
+            
+            // Update HTML lang attribute
+            document.documentElement.lang = lang === 'zh-TW' ? 'zh-Hant' : (lang === 'en' ? 'en' : 'zh-CN');
+        }
+
         // Modal Functions
         function openConsultModal() {
             document.getElementById('consultModal').style.display = 'flex';
